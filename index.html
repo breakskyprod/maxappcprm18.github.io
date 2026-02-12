@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Центр профилактики</title>
+    <!-- MAX Bridge -->
+    <script src="https://st.max.ru/js/max-web-app.js"></script>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+        body {
+            background: linear-gradient(145deg, #f8f0ff 0%, #ede4f5 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            padding: 16px;
+            padding-bottom: 40px;
+            transition: background 0.3s ease;
+        }
+
+        /* Glassmorphism */
+        .app-container {
+            max-width: 500px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 20px 40px rgba(120, 30, 180, 0.08),
+                        0 4px 12px rgba(0, 0, 0, 0.02);
+            padding: 28px 22px;
+            transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+        }
+
+        .main-screen, .form-screen {
+            display: block;
+        }
+
+        .form-screen {
+            display: none;
+        }
+
+        /* ===== ТЕКСТ ТЕПЕРЬ #1D1D1D ===== */
+        h1 {
+            font-size: 26px;
+            font-weight: 800;
+            color: #1D1D1D;
+            margin-bottom: 8px;
+            line-height: 1.2;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        h1 i {
+            color: #781EB4; /* ФИОЛЕТОВЫЙ */
+            font-size: 28px;
+            background: rgba(120, 30, 180, 0.1);
+            padding: 12px;
+            border-radius: 18px;
+        }
+
+        .org-sub {
+            color: #1D1D1D;
+            font-size: 15px;
+            margin-bottom: 28px;
+            border-bottom: 1px solid rgba(120, 30, 180, 0.15);
+            padding-bottom: 20px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .org-sub i {
+            color: #781EB4; /* ФИОЛЕТОВЫЙ */
+        }
+
+        /* ===== МЕНЮ ===== */
+        .menu-icons {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0 32px;
+            gap: 12px;
+        }
+
+        .menu-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 20px 8px;
+            border-radius: 28px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(120, 30, 180, 0.05);
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: #781EB4;
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(120, 30, 180, 0.15);
+        }
+
+        .menu-item:active {
+            transform: scale(0.96);
+        }
+
+        .menu-icon {
+            font-size: 48px;
+            color: #781EB4; /* ФИОЛЕТОВЫЙ */
+            margin-bottom: 12px;
+            background: rgba(120, 30, 180, 0.08);
+            padding: 16px;
+            border-radius: 24px;
+            transition: all 0.2s ease;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .menu-item:hover .menu-icon {
+            background: rgba(120, 30, 180, 0.15);
+            transform: scale(1.05);
+        }
+
+        .menu-label {
+            font-weight: 700;
+            font-size: 15px;
+            color: #1D1D1D; /* ТЕКСТ ТЁМНО-СЕРЫЙ */
+            line-height: 1.4;
+            letter-spacing: -0.2px;
+        }
+
+        /* ===== НОМЕР ТЕЛЕФОНА ===== */
+        .phone-block {
+            background: rgba(120, 30, 180, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 32px;
+            padding: 16px 20px;
+            margin: 16px 0 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid rgba(120, 30, 180, 0.2);
+            transition: all 0.3s ease;
+            flex-wrap: wrap;
+        }
+
+        .phone-label {
+            font-size: 16px;
+            color: #1D1D1D; /* ТЕКСТ ТЁМНО-СЕРЫЙ */
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .phone-label i {
+            font-size: 20px;
+            color: #781EB4; /* ФИОЛЕТОВЫЙ */
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            border-radius: 50%;
+            box-shadow: 0 4px 8px rgba(120, 30, 180, 0.1);
+        }
+
+        .call-link {
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .phone-number {
+            font-size: 17px;
+            font-weight: 700;
+            color: #1D1D1D; /* ТЕКСТ ТЁМНО-СЕРЫЙ */
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(4px);
+            padding: 10px 18px;
+            border-radius: 40px;
+            border: 1px solid rgba(120, 30, 180, 0.3);
+            display: inline-block;
+            transition: all 0.2s ease;
+            letter-spacing: 0.3px;
+            box-shadow: 0 4px 12px rgba(120, 30, 180, 0.1);
+            white-space: nowrap;
+        }
+
+        .phone-number:hover {
+            background: white;
+            border-color: #781EB4;
+            transform: scale(1.02);
+            box-shadow: 0 8px 20px rgba(120, 30, 180, 0.2);
+        }
+
+        .phone-number i {
+            margin-right: 6px;
+            font-size: 16px;
+            color: #781EB4; /* ФИОЛЕТОВЫЙ */
+        }
+
+        /* ===== ФОРМЫ ===== */
+        .form-section {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 32px;
+            padding: 26px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 700;
+            color: #1D1D1D; /* ТЕКСТ ТЁМНО-СЕРЫЙ */
+            margin-bottom: 10px;
+            letter-spacing: -0.2px;
+        }
+
+        label i {
+            margin-right: 8px;
+            font-size: 15px;
+            color: #781EB4; /* ФИОЛЕТОВЫЙ */
+        }
+
+        input {
+            width: 100%;
+            padding: 18px 20px;
+            border: 1.5px solid rgba(120, 30, 180, 0.15);
+            border-radius: 24px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.9);
+            transition: 0.2s;
+            color: #1D1D1D;
+            backdrop-filter: blur(4px);
+        }
+
+        input:focus {
+            border-color: #781EB4;
+            outline: none;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(120, 30, 180, 0.1);
+        }
+
+        input::placeholder {
+            color: rgba(29, 29, 29, 0.4);
+            font-weight: 400;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 28px;
+            margin-top: 10px;
+        }
+
+        .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .radio-item label {
+            margin-bottom: 0;
+            font-weight: 600;
+            color: #1D1D1D; /* ТЕКСТ ТЁМНО-СЕРЫЙ */
+        }
+
+        input[type="radio"] {
+            accent-color: #781EB4; /* ФИОЛЕТОВЫЙ */
+            width: 20px;
+            height: 20px;
+            margin-right: 4px;
+        }
+
+        .policy-text {
+            font-size: 13px;
+            color: #1D1D1D; /* ТЕКСТ ТЁМНО-СЕРЫЙ */
+            background: rgba(120, 30, 180, 0.04);
+            backdrop-filter: blur(8px);
+            padding: 18px 20px;
+            border-radius: 24px;
+            margin: 24px 0 20px;
+            border-left: 4px solid #781EB4; /* ФИОЛЕТОВЫЙ */
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .policy-text a {
+            color: #781EB4; /* ФИОЛЕТОВЫЙ */
+            text-decoration: underline;
+            text-decoration-thickness: 2px;
+            text-underline-offset: 4px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .policy-text a:hover {
+            opacity: 0.8;
+        }
+
+        .policy-text i {
+            color: #781EB4; /* ФИОЛЕТОВЫЙ */
+            margin-right: 8px;
+        }
+
+        /* ===== КНОПКИ ===== */
+        .button {
+            background: linear-gradient(145deg, #8c2ed0, #781EB4);
+            color: white;
+            border: none;
+            border-radius: 32px;
+            padding: 20px 24px;
+            font-size: 18px;
+            font-weight: 700;
+            width: 100%;
+            transition: all 0.2s ease;
+            margin-bottom: 16px;
+            cursor: pointer;
+            box-shadow: 0 12px 28px rgba(120, 30, 180, 0.3);
+            letter-spacing: 0.5px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 18px 32px rgba(120, 30, 180, 0.4);
+            background: linear-gradient(145deg, #9a3ae0, #8620c8);
+        }
+
+        .button:active {
+            transform: scale(0.97);
+            box-shadow: 0 8px 16px rgba(120, 30, 180, 0.3);
+        }
+
+        .button i {
+            font-size: 20px;
+            color: white;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(120, 30, 180, 0.2);
+            border-radius: 40px;
+            color: #1D1D1D; /* ТЕКСТ ТЁМНО-СЕРЫЙ */
+            font-size: 16px;
+            font-weight: 700;
+            padding: 14px 24px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: all 0.2s;
+        }
+
+        .back-button:hover {
+            background: white;
+            border-color: #781EB4;
+            color: #781EB4;
+        }
+
+        .back-button i {
+            font-size: 16px;
+            color: #781EB4; /* ФИОЛЕТОВЫЙ */
+        }
+
+        .back-button:hover i {
+            color: #781EB4;
+        }
+
+        /* ===== TOAST ===== */
+        .toast-message {
+            background: linear-gradient(145deg, #8c2ed0, #781EB4);
+            color: white;
+            padding: 18px 28px;
+            border-radius: 60px;
+            font-size: 16px;
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 460px;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+            z-index: 1000;
+            font-weight: 600;
+            box-shadow: 0 16px 32px rgba(120, 30, 180, 0.3);
+            line-height: 1.5;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            letter-spacing: 0.3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .toast-message.show {
+            opacity: 1;
+        }
+
+        .toast-message i {
+            font-size: 18px;
+            color: white;
+        }
+
+        .footer-note {
+            font-size: 12px;
+            color: #1D1D1D; /* ТЕКСТ ТЁМНО-СЕРЫЙ */
+            text-align: center;
+            margin-top: 28px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            backdrop-filter: blur(4px);
+            padding: 8px;
+            border-radius: 40px;
+            opacity: 0.7;
+        }
+
+        /* Тёмная тема (адаптировал) */
+        body.dark-theme {
+            background: linear-gradient(145deg, #1a0a24, #0f0a1a);
+        }
+
+        body.dark-theme .app-container {
+            background: rgba(20, 10, 30, 0.7);
+            border-color: rgba(120, 30, 180, 0.3);
+        }
+
+        body.dark-theme h1,
+        body.dark-theme .org-sub,
+        body.dark-theme .menu-label,
+        body.dark-theme .phone-label,
+        body.dark-theme .phone-number,
+        body.dark-theme label,
+        body.dark-theme .radio-item label,
+        body.dark-theme .policy-text,
+        body.dark-theme .back-button,
+        body.dark-theme .footer-note {
+            color: #ffffff;
+        }
+
+        body.dark-theme input {
+            background: rgba(30, 20, 40, 0.9);
+            color: white;
+            border-color: rgba(120, 30, 180, 0.3);
+        }
+
+        body.dark-theme input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container" id="appContainer">
+        <!-- ГЛАВНЫЙ ЭКРАН -->
+        <div id="mainScreen" class="main-screen">
+            <h1>
+                <i class="fas fa-shield-hal"></i>
+                БУ УР «Центр профилактики»
+            </h1>
+            <div class="org-sub">
+                <i class="fas fa-map-marker-alt"></i>
+                Удмуртская Республика
+            </div>
+
+            <!-- ТРИ ИКОНКИ FONT AWESOME -->
+            <div class="menu-icons">
+                <div class="menu-item" id="menuConsult">
+                    <div class="menu-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <span class="menu-label">Записаться<br>на консультацию</span>
+                </div>
+                
+                <div class="menu-item" id="menuInvite">
+                    <div class="menu-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <span class="menu-label">Пригласить<br>на мероприятие</span>
+                </div>
+                
+                <div class="menu-item" id="menuECAS">
+                    <div class="menu-icon">
+                        <i class="fas fa-external-link-alt"></i>
+                    </div>
+                    <span class="menu-label">ЕЦАС</span>
+                </div>
+            </div>
+
+            <!-- НОМЕР ТЕЛЕФОНА: ТЕКСТ #1D1D1D, ИКОНКА ФИОЛЕТ -->
+            <div class="phone-block">
+                <span class="phone-label">
+                    <i class="fas fa-headset"></i>
+                    Уточнить вопросы:
+                </span>
+                <a href="tel:+73412930345" class="call-link">
+                    <span class="phone-number" id="clickablePhone">
+                        <i class="fas fa-phone-alt"></i>
+                        +7 (3412) 93-03-45
+                    </span>
+                </a>
+            </div>
+            <div style="height: 8px;"></div>
+        </div>
+
+        <!-- ЭКРАН ФОРМЫ -->
+        <div id="formScreen" class="form-screen">
+            <button class="back-button" id="backToMainBtn">
+                <i class="fas fa-arrow-left"></i>
+                На главную
+            </button>
+            <div id="formContent"></div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast-message">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastText"></span>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            const WebApp = window.WebApp;
+            if (!WebApp) {
+                alert('Ошибка: библиотека MAX Bridge не загружена');
+                return;
+            }
+
+            // АВТОМАТИЧЕСКАЯ ТЕМА MAX
+            function applyMaxTheme() {
+                const body = document.body;
+                const theme = WebApp.colorScheme || WebApp.theme || 'light';
+                console.log('🎨 Тема MAX:', theme);
+                
+                if (theme === 'dark' || theme === 'night' || theme === 'black') {
+                    body.classList.add('dark-theme');
+                } else {
+                    body.classList.remove('dark-theme');
+                }
+            }
+
+            applyMaxTheme();
+
+            WebApp.onEvent('themeChanged', function(themeData) {
+                console.log('🔄 Тема изменена:', themeData);
+                applyMaxTheme();
+            });
+
+            if (WebApp.onEvent) {
+                WebApp.onEvent('colorSchemeChanged', applyMaxTheme);
+            }
+
+            WebApp.ready();
+            WebApp.enableClosingConfirmation();
+            WebApp.BackButton.show();
+            WebApp.BackButton.onClick(() => {
+                if (formScreen.style.display === 'block') {
+                    showMainScreen();
+                } else {
+                    WebApp.close();
+                }
+            });
+
+            const mainScreen = document.getElementById('mainScreen');
+            const formScreen = document.getElementById('formScreen');
+            const formContent = document.getElementById('formContent');
+            const backToMainBtn = document.getElementById('backToMainBtn');
+
+            const POLICY_URL = 'https://disk.yandex.ru/d/KrLs5xKSHHgzmA';
+
+            function showMainScreen() {
+                mainScreen.style.display = 'block';
+                formScreen.style.display = 'none';
+                WebApp.BackButton.show();
+            }
+
+            function showFormScreen(formHtml) {
+                mainScreen.style.display = 'none';
+                formScreen.style.display = 'block';
+                formContent.innerHTML = formHtml;
+                window.scrollTo(0, 0);
+                if (WebApp.HapticFeedback) {
+                    WebApp.HapticFeedback.impactOccurred('light');
+                }
+            }
+
+            backToMainBtn.addEventListener('click', function() {
+                showMainScreen();
+            });
+
+            function sendToGroupChat(data) {
+                let message = '';
+                
+                if (data.type === 'consultation') {
+                    message = `📝 НОВАЯ ЗАЯВКА НА КОНСУЛЬТАЦИЮ\n\n` +
+                              `👤 ФИО: ${data.fullName}\n` +
+                              `📞 Телефон: ${data.phone}\n` +
+                              `🔁 Тип: ${data.consultType}\n` +
+                              `🆔 ID пользователя: ${data.userId || 'не указан'}\n` +
+                              `🕐 Время: ${data.timestamp}`;
+                } else if (data.type === 'event_invite') {
+                    message = `🎫 ЗАЯВКА НА ПРИГЛАШЕНИЕ\n\n` +
+                              `👤 ФИО: ${data.fullName}\n` +
+                              `📌 Должность: ${data.position}\n` +
+                              `📞 Телефон: ${data.phone}\n` +
+                              `🏙️ Муниципальное образование: ${data.municipality}\n` +
+                              `🏢 Организация: ${data.organization}\n` +
+                              `🆔 ID пользователя: ${data.userId || 'не указан'}\n` +
+                              `🕐 Время: ${data.timestamp}`;
+                }
+
+                WebApp.sendData(message);
+                showToast('📨 Отправка в групповой чат...', 'info');
+            }
+
+            // 1. КОНСУЛЬТАЦИЯ
+            document.getElementById('menuConsult').addEventListener('click', function() {
+                const formHtml = `
+                    <h1 style="font-size: 26px; margin-bottom: 16px; color: #1D1D1D; display: flex; align-items: center; gap: 12px;">
+                        <i class="fas fa-comments" style="color: #781EB4; background: rgba(120,30,180,0.1); padding: 12px; border-radius: 16px;"></i>
+                        Консультация
+                    </h1>
+                    <div class="form-section">
+                        <div class="form-group">
+                            <label style="color: #1D1D1D;">
+                                <i class="fas fa-user" style="color: #781EB4;"></i>
+                                Фамилия и имя
+                            </label>
+                            <input type="text" id="consultName" placeholder="Иванов Иван" autocomplete="name">
+                        </div>
+                        <div class="form-group">
+                            <label style="color: #1D1D1D;">
+                                <i class="fas fa-phone" style="color: #781EB4;"></i>
+                                Номер телефона
+                            </label>
+                            <input type="tel" id="consultPhone" placeholder="+7 912 345-67-89" autocomplete="tel">
+                        </div>
+                        <div class="form-group">
+                            <label style="color: #1D1D1D;">
+                                <i class="fas fa-sync" style="color: #781EB4;"></i>
+                                Тип консультации
+                            </label>
+                            <div class="radio-group">
+                                <div class="radio-item">
+                                    <input type="radio" name="consultType" id="consultPrimary" value="Первично" checked>
+                                    <label for="consultPrimary" style="color: #1D1D1D;">Первично</label>
+                                </div>
+                                <div class="radio-item">
+                                    <input type="radio" name="consultType" id="consultRepeated" value="Повторно">
+                                    <label for="consultRepeated" style="color: #1D1D1D;">Повторно</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="policy-text" style="color: #1D1D1D; border-left-color: #781EB4;">
+                        <i class="fas fa-shield" style="color: #781EB4;"></i>
+                        Нажимая на кнопку, вы даете согласие на <a href="#" onclick="window.WebApp.openLink('${POLICY_URL}'); return false;">обработку персональных данных</a> и соглашаетесь c <a href="#" onclick="window.WebApp.openLink('${POLICY_URL}'); return false;">политикой конфиденциальности</a>.
+                    </div>
+                    <button class="button" id="submitConsultBtn">
+                        <i class="fas fa-check-circle"></i>
+                        Записаться
+                    </button>
+                `;
+                showFormScreen(formHtml);
+
+                document.getElementById('submitConsultBtn').addEventListener('click', function() {
+                    const name = document.getElementById('consultName')?.value.trim();
+                    const phone = document.getElementById('consultPhone')?.value.trim();
+                    
+                    if (!name) {
+                        showToast('Введите фамилию и имя', 'warning');
+                        if (WebApp.HapticFeedback) WebApp.HapticFeedback.notificationOccurred('warning');
+                        return;
+                    }
+                    if (!phone) {
+                        showToast('Введите номер телефона', 'warning');
+                        if (WebApp.HapticFeedback) WebApp.HapticFeedback.notificationOccurred('warning');
+                        return;
+                    }
+
+                    const consultType = document.querySelector('input[name="consultType"]:checked')?.value || 'Первично';
+
+                    const applicationData = {
+                        type: 'consultation',
+                        fullName: name,
+                        phone: phone,
+                        consultType: consultType,
+                        timestamp: new Date().toLocaleString('ru-RU'),
+                        userId: WebApp.initDataUnsafe?.user?.id || 'не авторизован',
+                        username: WebApp.initDataUnsafe?.user?.username || ''
+                    };
+
+                    sendToGroupChat(applicationData);
+                    showToast('✅ Спасибо! Заявка отправлена!', 'success');
+                    
+                    if (WebApp.HapticFeedback) {
+                        WebApp.HapticFeedback.notificationOccurred('success');
+                    }
+
+                    setTimeout(() => {
+                        showMainScreen();
+                    }, 2000);
+                });
+            });
+
+            // 2. ПРИГЛАШЕНИЕ
+            document.getElementById('menuInvite').addEventListener('click', function() {
+                const formHtml = `
+                    <h1 style="font-size: 26px; margin-bottom: 16px; color: #1D1D1D; display: flex; align-items: center; gap: 12px;">
+                        <i class="fas fa-calendar-alt" style="color: #781EB4; background: rgba(120,30,180,0.1); padding: 12px; border-radius: 16px;"></i>
+                        Приглашение
+                    </h1>
+                    <div class="form-section">
+                        <div class="form-group">
+                            <label style="color: #1D1D1D;">
+                                <i class="fas fa-user-tie" style="color: #781EB4;"></i>
+                                ФИО
+                            </label>
+                            <input type="text" id="inviteFullName" placeholder="Иванов Иван Иванович">
+                        </div>
+                        <div class="form-group">
+                            <label style="color: #1D1D1D;">
+                                <i class="fas fa-briefcase" style="color: #781EB4;"></i>
+                                Должность
+                            </label>
+                            <input type="text" id="invitePosition" placeholder="Директор, специалист...">
+                        </div>
+                        <div class="form-group">
+                            <label style="color: #1D1D1D;">
+                                <i class="fas fa-phone" style="color: #781EB4;"></i>
+                                Номер телефона
+                            </label>
+                            <input type="tel" id="invitePhone" placeholder="+7 912 345-67-89">
+                        </div>
+                        <div class="form-group">
+                            <label style="color: #1D1D1D;">
+                                <i class="fas fa-city" style="color: #781EB4;"></i>
+                                Муниципальное образование
+                            </label>
+                            <input type="text" id="inviteMunicipality" placeholder="г. Ижевск, Завьяловский р-н...">
+                        </div>
+                        <div class="form-group">
+                            <label style="color: #1D1D1D;">
+                                <i class="fas fa-building" style="color: #781EB4;"></i>
+                                Организация
+                            </label>
+                            <input type="text" id="inviteOrg" placeholder="ООО Пример, Школа №1...">
+                        </div>
+                    </div>
+                    <div class="policy-text" style="color: #1D1D1D; border-left-color: #781EB4;">
+                        <i class="fas fa-shield" style="color: #781EB4;"></i>
+                        Нажимая на кнопку, вы даете согласие на <a href="#" onclick="window.WebApp.openLink('${POLICY_URL}'); return false;">обработку персональных данных</a> и соглашаетесь c <a href="#" onclick="window.WebApp.openLink('${POLICY_URL}'); return false;">политикой конфиденциальности</a>.
+                    </div>
+                    <button class="button" id="submitInviteBtn">
+                        <i class="fas fa-paper-plane"></i>
+                        Отправить приглашение
+                    </button>
+                `;
+                showFormScreen(formHtml);
+
+                document.getElementById('submitInviteBtn').addEventListener('click', function() {
+                    const fullName = document.getElementById('inviteFullName')?.value.trim();
+                    const position = document.getElementById('invitePosition')?.value.trim();
+                    const phone = document.getElementById('invitePhone')?.value.trim();
+                    const municipality = document.getElementById('inviteMunicipality')?.value.trim();
+                    const org = document.getElementById('inviteOrg')?.value.trim();
+
+                    if (!fullName || !position || !phone || !municipality || !org) {
+                        showToast('Заполните все поля', 'warning');
+                        if (WebApp.HapticFeedback) WebApp.HapticFeedback.notificationOccurred('warning');
+                        return;
+                    }
+
+                    const inviteData = {
+                        type: 'event_invite',
+                        fullName,
+                        position,
+                        phone,
+                        municipality,
+                        organization: org,
+                        timestamp: new Date().toLocaleString('ru-RU'),
+                        userId: WebApp.initDataUnsafe?.user?.id || 'не авторизован',
+                        username: WebApp.initDataUnsafe?.user?.username || ''
+                    };
+
+                    sendToGroupChat(inviteData);
+                    showToast('✅ Спасибо! Заявка отправлена!', 'success');
+                    
+                    if (WebApp.HapticFeedback) {
+                        WebApp.HapticFeedback.notificationOccurred('success');
+                    }
+
+                    setTimeout(() => {
+                        showMainScreen();
+                    }, 2000);
+                });
+            });
+
+            // 3. ЕЦАС
+            document.getElementById('menuECAS').addEventListener('click', function() {
+                if (WebApp.openLink) {
+                    WebApp.openLink('https://vk.com/cprm18');
+                } else {
+                    window.open('https://vk.com/cprm18', '_blank');
+                }
+                
+                if (WebApp.HapticFeedback) {
+                    WebApp.HapticFeedback.impactOccurred('soft');
+                }
+            });
+
+            // TOAST
+            function showToast(message, type = 'info') {
+                const toast = document.getElementById('toast');
+                const toastText = document.getElementById('toastText');
+                toastText.innerText = message;
+                toast.classList.add('show');
+                
+                let icon = 'fa-info-circle';
+                if (type === 'success') icon = 'fa-check-circle';
+                else if (type === 'warning') icon = 'fa-exclamation-triangle';
+                else if (type === 'error') icon = 'fa-times-circle';
+                
+                toast.innerHTML = `<i class="fas ${icon}"></i><span id="toastText">${message}</span>`;
+                
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            }
+
+            function initUserData() {
+                const user = WebApp.initDataUnsafe?.user;
+                if (user) {
+                    console.log('Пользователь MAX:', user);
+                }
+            }
+
+            showMainScreen();
+            initUserData();
+
+        })();
+    </script>
+</body>
+</html>
