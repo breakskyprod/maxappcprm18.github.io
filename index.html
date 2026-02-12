@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Центр профилактики</title>
+    <!-- MAX Bridge (загрузится только внутри MAX) -->
+    <script src="https://st.max.ru/js/max-web-app.js"></script>
+    <!-- ваш стиль без изменений -->
+</head>
+<body>
+    <!-- ваш HTML без изменений -->
+
+    <script>
+        (function() {
+            'use strict';
+
+            // === АДАПТЕР ДЛЯ GITHUB PAGES ===
+            const WebApp = window.WebApp;
+            const isMaxEnvironment = !!WebApp; // true = внутри MAX, false = браузер
+
+            // Создаём заглушки для браузера
+            if (!isMaxEnvironment) {
+                console.log('🖥️ Запуск в браузере (GitHub Pages)');
+                window.WebApp = window.WebApp || {
+                    ready: () => {},
+                    close: () => alert('Закрытие приложения (демо)'),
+                    enableClosingConfirmation: () => {},
+                    BackButton: {
+                        show: () => {},
+                        onClick: (cb) => {},
+                        hide: () => {}
+                    },
+                    HapticFeedback: {
+                        impactOccurred: () => {},
+                        notificationOccurred: () => {},
+                        selectionChanged: () => {}
+                    },
+                    openLink: (url) => window.open(url, '_blank'),
+                    sendData: (data) => {
+                        console.log('📨 Отправка в чат MAX (демо):', data);
+                        alert('✅ В режиме GitHub Pages: заявка НЕ отправлена в MAX\n\n' + data);
+                    },
+                    initDataUnsafe: {
+                        user: { id: 123, first_name: 'Тест', last_name: 'Пользователь' }
+                    }
+                };
+            }
+
+            // Теперь WebApp точно существует
+            const SafeWebApp = window.WebApp;
+
+            // Используем SafeWebApp вместо WebApp
+            if (isMaxEnvironment) {
+                SafeWebApp.ready();
+                SafeWebApp.enableClosingConfirmation();
+                SafeWebApp.BackButton.show();
+                SafeWebApp.BackButton.onClick(() => {
+                    if (formScreen.style.display === 'block') {
+                        showMainScreen();
+                    } else {
+                        SafeWebApp.close();
+                    }
+                });
+            }
+
+            // ... остальной код БЕЗ ИЗМЕНЕНИЙ, 
+            // но везде используем SafeWebApp вместо WebApp
+            
+            // Пример:
+            const clickablePhone = document.getElementById('clickablePhone');
+            clickablePhone.addEventListener('click', async function() {
+                const phoneNumber = this.innerText;
+                try {
+                    await navigator.clipboard.writeText(phoneNumber);
+                    if (isMaxEnvironment && SafeWebApp.HapticFeedback) {
+                        SafeWebApp.HapticFeedback.notificationOccurred('success');
+                    }
+                    showToast('📋 Номер скопирован: ' + phoneNumber, 'success');
+                } catch (err) {
+                    // fallback
+                }
+            });
+
+            // Функция отправки
+            function sendToGroupChat(data) {
+                let message = '';
+                // ... формирование сообщения
+                
+                if (isMaxEnvironment) {
+                    SafeWebApp.sendData(message); // реальная отправка в MAX
+                } else {
+                    console.log('📨 Демо-режим (GitHub Pages):', message);
+                    showToast('📨 Демо: заявка сохранена в консоли', 'info');
+                }
+            }
+
+            // ... остальной код
+        })();
+    </script>
+</body>
+</html>
