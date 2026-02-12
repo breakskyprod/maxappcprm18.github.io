@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Центр профилактики</title>
+    <!-- MAX Bridge -->
+    <script src="https://st.max.ru/js/max-web-app.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background: #f2f5f9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            padding: 16px;
+            padding-bottom: 40px;
+        }
+
+        .app-container {
+            max-width: 500px;
+            width: 100%;
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 12px 28px rgba(0,20,50,0.08);
+            padding: 28px 20px;
+            transition: 0.2s;
+        }
+
+        .main-screen, .form-screen {
+            display: block;
+        }
+
+        .form-screen {
+            display: none;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0a2e4a;
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .org-sub {
+            color: #4b6f8a;
+            font-size: 15px;
+            margin-bottom: 28px;
+            border-bottom: 1px solid #e2eaf0;
+            padding-bottom: 20px;
+        }
+
+        .menu-icons {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0 32px;
+            gap: 12px;
+        }
+
+        .menu-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            background: #f7faff;
+            padding: 20px 8px;
+            border-radius: 24px;
+            border: 1.5px solid #e2ecf5;
+            transition: all 0.15s;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .menu-item:active {
+            background: #e1ebfa;
+            border-color: #3e7eb0;
+            transform: scale(0.97);
+        }
+
+        .menu-icon {
+            font-size: 38px;
+            margin-bottom: 12px;
+        }
+
+        .menu-label {
+            font-weight: 600;
+            font-size: 15px;
+            color: #0a2e4a;
+            line-height: 1.3;
+        }
+
+        .phone-block {
+            background: linear-gradient(145deg, #eef6fc, #e2ecf5);
+            border-radius: 28px;
+            padding: 20px;
+            margin: 16px 0 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid #bdd6e8;
+        }
+
+        .phone-label {
+            font-size: 16px;
+            color: #1e415e;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .phone-number {
+            font-size: 19px;
+            font-weight: 700;
+            color: #0a2e4a;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 40px;
+            border: 1px solid #9fbfd9;
+            display: inline-block;
+            cursor: pointer;
+            transition: 0.2s;
+            user-select: all;
+        }
+
+        .phone-number:hover {
+            background: #f0f9ff;
+            border-color: #2f6ef0;
+        }
+
+        .form-section {
+            background: #ffffff;
+            border-radius: 28px;
+            padding: 24px;
+            margin-bottom: 16px;
+            border: 1px solid #e6ecf2;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1e415e;
+            margin-bottom: 8px;
+        }
+
+        input {
+            width: 100%;
+            padding: 16px 18px;
+            border: 1.8px solid #dbe3eb;
+            border-radius: 20px;
+            font-size: 16px;
+            background: white;
+            transition: 0.15s;
+        }
+
+        input:focus {
+            border-color: #3a7eb0;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(58,126,176,0.08);
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 24px;
+            margin-top: 8px;
+        }
+
+        .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .radio-item label {
+            margin-bottom: 0;
+            font-weight: 500;
+        }
+
+        .policy-text {
+            font-size: 13px;
+            color: #4f6f87;
+            background: #f2f8fd;
+            padding: 16px 18px;
+            border-radius: 20px;
+            margin: 20px 0 16px;
+            border-left: 4px solid #3a7eb0;
+            line-height: 1.5;
+        }
+
+        .policy-text a {
+            color: #1a5a8c;
+            text-decoration: underline;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .button {
+            background: #2a6b9c;
+            color: white;
+            border: none;
+            border-radius: 26px;
+            padding: 18px 24px;
+            font-size: 18px;
+            font-weight: 640;
+            width: 100%;
+            transition: 0.16s;
+            margin-bottom: 16px;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(42,107,156,0.2);
+        }
+
+        .button:active {
+            transform: scale(0.98);
+            opacity: 0.9;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: none;
+            border: none;
+            color: #2a6b9c;
+            font-size: 16px;
+            font-weight: 600;
+            padding: 12px 0;
+            cursor: pointer;
+            margin-bottom: 16px;
+        }
+
+        .toast-message {
+            background: #0e3b4e;
+            color: white;
+            padding: 18px 24px;
+            border-radius: 60px;
+            font-size: 16px;
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 460px;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+            z-index: 1000;
+            font-weight: 500;
+            box-shadow: 0 16px 32px rgba(0,0,0,0.2);
+            line-height: 1.4;
+        }
+
+        .toast-message.show {
+            opacity: 1;
+        }
+
+        .footer-note {
+            font-size: 12px;
+            color: #7c94a8;
+            text-align: center;
+            margin-top: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container" id="appContainer">
+        <!-- ГЛАВНЫЙ ЭКРАН -->
+        <div id="mainScreen" class="main-screen">
+            <h1>БУ УР «Центр профилактики»</h1>
+            <div class="org-sub">Удмуртская Республика</div>
+
+            <!-- ТРИ ИКОНКИ МЕНЮ -->
+            <div class="menu-icons">
+                <div class="menu-item" id="menuConsult">
+                    <span class="menu-icon">🗣️</span>
+                    <span class="menu-label">Записаться<br>на консультацию</span>
+                </div>
+                <div class="menu-item" id="menuInvite">
+                    <span class="menu-icon">📅</span>
+                    <span class="menu-label">Пригласить<br>на мероприятие</span>
+                </div>
+                <div class="menu-item" id="menuECAS">
+                    <span class="menu-icon">🔗</span>
+                    <span class="menu-label">ЕЦАС</span>
+                </div>
+            </div>
+
+            <!-- АКТИВНЫЙ НОМЕР: Уточнить вопросы -->
+            <div class="phone-block">
+                <span class="phone-label">❓ Уточнить вопросы:</span>
+                <span class="phone-number" id="clickablePhone">+7 (3412) 93-03-45</span>
+            </div>
+            <div style="height: 8px;"></div>
+        </div>
+
+        <!-- ЭКРАН ФОРМЫ -->
+        <div id="formScreen" class="form-screen">
+            <button class="back-button" id="backToMainBtn">← На главную</button>
+            <div id="formContent"></div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast-message"></div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            const WebApp = window.WebApp;
+            if (!WebApp) {
+                alert('Ошибка: библиотека MAX Bridge не загружена');
+                return;
+            }
+
+            WebApp.ready();
+            WebApp.enableClosingConfirmation();
+            WebApp.BackButton.show();
+            WebApp.BackButton.onClick(() => {
+                if (formScreen.style.display === 'block') {
+                    showMainScreen();
+                } else {
+                    WebApp.close();
+                }
+            });
+
+            const mainScreen = document.getElementById('mainScreen');
+            const formScreen = document.getElementById('formScreen');
+            const formContent = document.getElementById('formContent');
+            const backToMainBtn = document.getElementById('backToMainBtn');
+
+            // Ссылка на Яндекс.Диск с документами
+            const POLICY_URL = 'https://disk.yandex.ru/d/KrLs5xKSHHgzmA';
+
+            function showMainScreen() {
+                mainScreen.style.display = 'block';
+                formScreen.style.display = 'none';
+                WebApp.BackButton.show();
+            }
+
+            function showFormScreen(formHtml) {
+                mainScreen.style.display = 'none';
+                formScreen.style.display = 'block';
+                formContent.innerHTML = formHtml;
+                window.scrollTo(0, 0);
+                if (WebApp.HapticFeedback) {
+                    WebApp.HapticFeedback.impactOccurred('light');
+                }
+            }
+
+            backToMainBtn.addEventListener('click', function() {
+                showMainScreen();
+            });
+
+            // --- КЛИКАБЕЛЬНЫЙ НОМЕР ---
+            const clickablePhone = document.getElementById('clickablePhone');
+            clickablePhone.addEventListener('click', async function() {
+                const phoneNumber = this.innerText;
+                try {
+                    await navigator.clipboard.writeText(phoneNumber);
+                    if (WebApp.HapticFeedback) WebApp.HapticFeedback.notificationOccurred('success');
+                    showToast('📋 Номер скопирован: ' + phoneNumber, 'success');
+                } catch (err) {
+                    const textarea = document.createElement('textarea');
+                    textarea.value = phoneNumber;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                    showToast('📋 Номер скопирован', 'info');
+                }
+            });
+
+            // ------------------------------------------------------------
+            // ФУНКЦИЯ ОТПРАВКИ В ГРУППОВОЙ ЧАТ MAX
+            // ------------------------------------------------------------
+            function sendToGroupChat(data) {
+                let message = '';
+                
+                if (data.type === 'consultation') {
+                    message = `📝 НОВАЯ ЗАЯВКА НА КОНСУЛЬТАЦИЮ\n\n` +
+                              `👤 ФИО: ${data.fullName}\n` +
+                              `📞 Телефон: ${data.phone}\n` +
+                              `🔁 Тип: ${data.consultType}\n` +
+                              `🆔 ID пользователя: ${data.userId || 'не указан'}\n` +
+                              `🕐 Время: ${data.timestamp}`;
+                } else if (data.type === 'event_invite') {
+                    message = `🎫 ЗАЯВКА НА ПРИГЛАШЕНИЕ\n\n` +
+                              `👤 ФИО: ${data.fullName}\n` +
+                              `📌 Должность: ${data.position}\n` +
+                              `📞 Телефон: ${data.phone}\n` +
+                              `🏙️ Муниципальное образование: ${data.municipality}\n` +
+                              `🏢 Организация: ${data.organization}\n` +
+                              `🆔 ID пользователя: ${data.userId || 'не указан'}\n` +
+                              `🕐 Время: ${data.timestamp}`;
+                }
+
+                WebApp.sendData(message);
+                showToast('📨 Отправка в групповой чат...', 'info');
+            }
+
+            // ------------------------------------------------------------
+            // 1. ЗАПИСАТЬСЯ НА КОНСУЛЬТАЦИЮ
+            // ------------------------------------------------------------
+            document.getElementById('menuConsult').addEventListener('click', function() {
+                const formHtml = `
+                    <h1 style="font-size: 26px; margin-bottom: 16px;">🗣️ Консультация</h1>
+                    <div class="form-section">
+                        <div class="form-group">
+                            <label>👤 Фамилия и имя</label>
+                            <input type="text" id="consultName" placeholder="Иванов Иван" autocomplete="name">
+                        </div>
+                        <div class="form-group">
+                            <label>📞 Номер телефона</label>
+                            <input type="tel" id="consultPhone" placeholder="+7 912 345-67-89" autocomplete="tel">
+                        </div>
+                        <div class="form-group">
+                            <label>🔁 Тип консультации</label>
+                            <div class="radio-group">
+                                <div class="radio-item">
+                                    <input type="radio" name="consultType" id="consultPrimary" value="Первично" checked>
+                                    <label for="consultPrimary">Первично</label>
+                                </div>
+                                <div class="radio-item">
+                                    <input type="radio" name="consultType" id="consultRepeated" value="Повторно">
+                                    <label for="consultRepeated">Повторно</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="policy-text">
+                        Нажимая на кнопку, вы даете согласие на <a href="#" onclick="window.WebApp.openLink('${POLICY_URL}'); return false;">обработку персональных данных</a> и соглашаетесь c <a href="#" onclick="window.WebApp.openLink('${POLICY_URL}'); return false;">политикой конфиденциальности</a>.
+                    </div>
+                    <button class="button" id="submitConsultBtn">✅ Записаться</button>
+                `;
+                showFormScreen(formHtml);
+
+                document.getElementById('submitConsultBtn').addEventListener('click', function() {
+                    const name = document.getElementById('consultName')?.value.trim();
+                    const phone = document.getElementById('consultPhone')?.value.trim();
+                    
+                    if (!name) {
+                        showToast('Введите фамилию и имя', 'warning');
+                        if (WebApp.HapticFeedback) WebApp.HapticFeedback.notificationOccurred('warning');
+                        return;
+                    }
+                    if (!phone) {
+                        showToast('Введите номер телефона', 'warning');
+                        if (WebApp.HapticFeedback) WebApp.HapticFeedback.notificationOccurred('warning');
+                        return;
+                    }
+
+                    const consultType = document.querySelector('input[name="consultType"]:checked')?.value || 'Первично';
+
+                    const applicationData = {
+                        type: 'consultation',
+                        fullName: name,
+                        phone: phone,
+                        consultType: consultType,
+                        timestamp: new Date().toLocaleString('ru-RU'),
+                        userId: WebApp.initDataUnsafe?.user?.id || 'не авторизован',
+                        username: WebApp.initDataUnsafe?.user?.username || ''
+                    };
+
+                    sendToGroupChat(applicationData);
+                    showToast('✅ Спасибо! Заявка отправлена в чат администратору!', 'success');
+                    
+                    if (WebApp.HapticFeedback) {
+                        WebApp.HapticFeedback.notificationOccurred('success');
+                    }
+
+                    setTimeout(() => {
+                        showMainScreen();
+                    }, 2000);
+                });
+            });
+
+            // ------------------------------------------------------------
+            // 2. ПРИГЛАСИТЬ НА МЕРОПРИЯТИЕ
+            // ------------------------------------------------------------
+            document.getElementById('menuInvite').addEventListener('click', function() {
+                const formHtml = `
+                    <h1 style="font-size: 26px; margin-bottom: 16px;">📅 Приглашение</h1>
+                    <div class="form-section">
+                        <div class="form-group">
+                            <label>👤 ФИО</label>
+                            <input type="text" id="inviteFullName" placeholder="Иванов Иван Иванович">
+                        </div>
+                        <div class="form-group">
+                            <label>📌 Должность</label>
+                            <input type="text" id="invitePosition" placeholder="Директор, специалист...">
+                        </div>
+                        <div class="form-group">
+                            <label>📞 Номер телефона</label>
+                            <input type="tel" id="invitePhone" placeholder="+7 912 345-67-89">
+                        </div>
+                        <div class="form-group">
+                            <label>🏙️ Муниципальное образование</label>
+                            <input type="text" id="inviteMunicipality" placeholder="г. Ижевск, Завьяловский р-н...">
+                        </div>
+                        <div class="form-group">
+                            <label>🏢 Организация</label>
+                            <input type="text" id="inviteOrg" placeholder="ООО Пример, Школа №1...">
+                        </div>
+                    </div>
+                    <div class="policy-text">
+                        Нажимая на кнопку, вы даете согласие на <a href="#" onclick="window.WebApp.openLink('${POLICY_URL}'); return false;">обработку персональных данных</a> и соглашаетесь c <a href="#" onclick="window.WebApp.openLink('${POLICY_URL}'); return false;">политикой конфиденциальности</a>.
+                    </div>
+                    <button class="button" id="submitInviteBtn">✅ Отправить приглашение</button>
+                `;
+                showFormScreen(formHtml);
+
+                document.getElementById('submitInviteBtn').addEventListener('click', function() {
+                    const fullName = document.getElementById('inviteFullName')?.value.trim();
+                    const position = document.getElementById('invitePosition')?.value.trim();
+                    const phone = document.getElementById('invitePhone')?.value.trim();
+                    const municipality = document.getElementById('inviteMunicipality')?.value.trim();
+                    const org = document.getElementById('inviteOrg')?.value.trim();
+
+                    if (!fullName || !position || !phone || !municipality || !org) {
+                        showToast('Заполните все поля', 'warning');
+                        if (WebApp.HapticFeedback) WebApp.HapticFeedback.notificationOccurred('warning');
+                        return;
+                    }
+
+                    const inviteData = {
+                        type: 'event_invite',
+                        fullName,
+                        position,
+                        phone,
+                        municipality,
+                        organization: org,
+                        timestamp: new Date().toLocaleString('ru-RU'),
+                        userId: WebApp.initDataUnsafe?.user?.id || 'не авторизован',
+                        username: WebApp.initDataUnsafe?.user?.username || ''
+                    };
+
+                    sendToGroupChat(inviteData);
+                    showToast('✅ Спасибо! Заявка отправлена в чат администратору!', 'success');
+                    
+                    if (WebApp.HapticFeedback) {
+                        WebApp.HapticFeedback.notificationOccurred('success');
+                    }
+
+                    setTimeout(() => {
+                        showMainScreen();
+                    }, 2000);
+                });
+            });
+
+            // ------------------------------------------------------------
+            // 3. ЕЦАС — открытие в браузере
+            // ------------------------------------------------------------
+            document.getElementById('menuECAS').addEventListener('click', function() {
+                if (WebApp.openLink) {
+                    WebApp.openLink('https://vk.com/cprm18');
+                } else {
+                    window.open('https://vk.com/cprm18', '_blank');
+                }
+                
+                if (WebApp.HapticFeedback) {
+                    WebApp.HapticFeedback.impactOccurred('soft');
+                }
+            });
+
+            // --- TOAST ---
+            function showToast(message, type = 'info') {
+                const toast = document.getElementById('toast');
+                toast.innerText = message;
+                toast.classList.add('show');
+                
+                if (type === 'success') toast.style.background = '#1e6f5c';
+                else if (type === 'warning') toast.style.background = '#b85a1c';
+                else if (type === 'error') toast.style.background = '#b02a37';
+                else toast.style.background = '#0e3b4e';
+                
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3500);
+            }
+
+            function initUserData() {
+                const user = WebApp.initDataUnsafe?.user;
+                if (user) {
+                    console.log('Пользователь MAX:', user);
+                }
+            }
+
+            showMainScreen();
+            initUserData();
+
+        })();
+    </script>
+</body>
+</html>
