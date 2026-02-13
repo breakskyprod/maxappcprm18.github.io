@@ -870,7 +870,7 @@
                 const encodedMessage = encodeURIComponent(message);
                 
                 // Ссылка на Telegram (работает и в MAX как внешняя ссылка)
-                const telegramUrl = `https://t.me/${BOT_USERNAME}?text=${encodedMessage}`;
+                const telegramUrl = `https://max.ru/${BOT_USERNAME}?text=${encodedMessage}`;
                 
                 // Пытаемся открыть внутри MAX
                 if (window.WebApp && typeof window.WebApp.openLink === 'function') {
