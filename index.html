@@ -9,7 +9,6 @@
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* ===== СТИЛИ БЕЗ ИЗМЕНЕНИЙ (ТВОЙ ИДЕАЛЬНЫЙ ДИЗАЙН) ===== */
         * {
             margin: 0;
             padding: 0;
@@ -73,6 +72,7 @@
             border-radius: 18px;
         }
 
+        /* ===== АДРЕС С КЛИКАБЕЛЬНОЙ КАРТОЙ ===== */
         .org-sub {
             color: #1D1D1D;
             font-size: 15px;
@@ -110,6 +110,7 @@
             margin-left: 2px;
         }
 
+        /* ===== АДАПТИВНОЕ МЕНЮ ===== */
         .menu-icons {
             display: flex;
             justify-content: space-around;
@@ -181,12 +182,14 @@
             word-break: break-word;
         }
 
+        /* ===== АНИМАЦИЯ ПОП-КОРН ДЛЯ ИКОНОК МЕНЮ ===== */
         @keyframes iconPop {
             0% { transform: scale(1); }
             50% { transform: scale(1.2); color: #9a3ae0; }
             100% { transform: scale(1); }
         }
 
+        /* ===== ТЕЛЕФОННЫЙ БЛОК ===== */
         .phone-block {
             background: rgba(120, 30, 180, 0.05);
             backdrop-filter: blur(10px);
@@ -251,7 +254,7 @@
         }
 
         .phone-number:active {
-            animation: phoneShake 0.8s ease;
+            animation: phoneShake 1.5s ease;
         }
 
         .phone-number i {
@@ -260,6 +263,7 @@
             color: #781EB4;
         }
 
+        /* ===== АНИМАЦИЯ ТРЯСКИ ТЕЛЕФОНА ===== */
         @keyframes phoneShake {
             0% { transform: translateX(0); }
             25% { transform: translateX(-4px); }
@@ -268,6 +272,7 @@
             100% { transform: translateX(0); }
         }
 
+        /* ===== ФОРМЫ ===== */
         .form-section {
             background: rgba(255, 255, 255, 0.6);
             backdrop-filter: blur(10px);
@@ -380,6 +385,7 @@
             margin-right: 8px;
         }
 
+        /* ===== КНОПКИ ОТПРАВКИ (Записаться / Отправить) ===== */
         .button {
             background: linear-gradient(145deg, #8c2ed0, #781EB4);
             color: white;
@@ -409,11 +415,11 @@
 
         .button:active {
             transform: scale(0.94);
-            animation: buttonGlow 0.8s ease;
+            animation: buttonGlow 1.0s ease;
         }
 
         .button:active i {
-            animation: iconFly 0.8s ease;
+            animation: iconFly 1.0s ease;
         }
 
         .button i {
@@ -433,6 +439,7 @@
             100% { transform: translateX(0); }
         }
 
+        /* ===== КНОПКА НА ГЛАВНУЮ ===== */
         .back-button {
             display: inline-flex;
             align-items: center;
@@ -461,7 +468,7 @@
         }
 
         .back-button:active i {
-            animation: arrowLeft 1.0s ease;
+            animation: arrowLeft 0.3s ease;
         }
 
         .back-button i {
@@ -526,6 +533,7 @@
             opacity: 0.7;
         }
 
+        /* ===== АДАПТАЦИЯ ПОД МАЛЕНЬКИЕ ЭКРАНЫ ===== */
         @media screen and (max-width: 380px) {
             .app-container {
                 padding: 20px 16px;
@@ -616,6 +624,7 @@
             }
         }
 
+        /* ===== ТЁМНАЯ ТЕМА ===== */
         body.dark-theme {
             background: linear-gradient(145deg, #1a0a24, #0f0a1a);
         }
@@ -672,7 +681,7 @@
                 БУ УР «Центр профилактики»
             </h1>
             
-            <!-- АДРЕС С КЛИКАБЕЛЬНОЙ КАРТОЙ -->
+            <!-- АДРЕС С КЛИКАБЕЛЬНОЙ ССЫЛКОЙ НА КАРТУ -->
             <div class="org-sub">
                 <i class="fas fa-map-marker-alt"></i>
                 <a href="https://yandex.ru/maps/-/CPQtMK1x" 
@@ -683,7 +692,7 @@
                 </a>
             </div>
 
-            <!-- МЕНЮ -->
+            <!-- АДАПТИВНЫЕ ИКОНКИ МЕНЮ -->
             <div class="menu-icons">
                 <div class="menu-item" id="menuConsult">
                     <div class="menu-icon">
@@ -707,7 +716,7 @@
                 </div>
             </div>
 
-            <!-- ТЕЛЕФОН -->
+            <!-- ТЕЛЕФОННЫЙ БЛОК -->
             <div class="phone-block">
                 <span class="phone-label">
                     <i class="fas fa-headset"></i>
@@ -747,14 +756,6 @@
                 alert('Ошибка: библиотека MAX Bridge не загружена');
                 return;
             }
-
-            // ==============================================
-            // 🚀 ВСТАВЬ СЮДА ЮЗЕРНЕЙМ СВОЕГО БОТА (БЕЗ @)
-            // ==============================================
-            const BOT_USERNAME = 'centrprm18_bot'; // Например: center_bot или my_center_bot
-            
-            // Ссылка на Яндекс.Диск с документами
-            const POLICY_URL = 'https://disk.yandex.ru/d/KrLs5xKSHHgzmA';
 
             // АВТОМАТИЧЕСКАЯ ТЕМА MAX
             function applyMaxTheme() {
@@ -796,6 +797,8 @@
             const formContent = document.getElementById('formContent');
             const backToMainBtn = document.getElementById('backToMainBtn');
 
+            const POLICY_URL = 'https://disk.yandex.ru/d/KrLs5xKSHHgzmA';
+
             function showMainScreen() {
                 mainScreen.style.display = 'block';
                 formScreen.style.display = 'none';
@@ -816,9 +819,6 @@
                 showMainScreen();
             });
 
-            // ==============================================
-            // 🚀 СПАСАТЕЛЬНЫЙ КРУГ — ОТПРАВКА ДАЖЕ С МЁРТВЫМ БОТОМ
-            // ==============================================
             function sendToGroupChat(data) {
                 let message = '';
                 
@@ -827,6 +827,7 @@
                               `👤 ФИО: ${data.fullName}\n` +
                               `📞 Телефон: ${data.phone}\n` +
                               `🔁 Тип: ${data.consultType}\n` +
+                              `🆔 ID пользователя: ${data.userId || 'не указан'}\n` +
                               `🕐 Время: ${data.timestamp}`;
                 } else if (data.type === 'event_invite') {
                     message = `🎫 ЗАЯВКА НА ПРИГЛАШЕНИЕ\n\n` +
@@ -835,62 +836,15 @@
                               `📞 Телефон: ${data.phone}\n` +
                               `🏙️ Муниципальное образование: ${data.municipality}\n` +
                               `🏢 Организация: ${data.organization}\n` +
+                              `🆔 ID пользователя: ${data.userId || 'не указан'}\n` +
                               `🕐 Время: ${data.timestamp}`;
                 }
 
-                // ==========================================
-                // 🥇 ПОПЫТКА 1: ОТПРАВКА ЧЕРЕЗ WebApp.sendData
-                // ==========================================
-                if (window.WebApp && typeof window.WebApp.sendData === 'function') {
-                    try {
-                        window.WebApp.sendData(message);
-                        console.log('✅ Отправлено через WebApp.sendData');
-                        showToast('✅ Заявка отправлена в чат администратору!', 'success');
-                        
-                        if (WebApp.HapticFeedback) {
-                            WebApp.HapticFeedback.notificationOccurred('success');
-                        }
-                        
-                        setTimeout(() => {
-                            showMainScreen();
-                        }, 2000);
-                        
-                        return; // Всё, ушли
-                    } catch (e) {
-                        console.error('❌ Ошибка WebApp.sendData:', e);
-                        // Если ошибка — пробуем запасной вариант
-                    }
-                }
-
-                // ==========================================
-                // 🥈 ПОПЫТКА 2: ОТКРЫВАЕМ ЧАТ С БОТОМ И ВСТАВЛЯЕМ СООБЩЕНИЕ
-                // ==========================================
-                
-                // Кодируем сообщение для ссылки
-                const encodedMessage = encodeURIComponent(message);
-                
-                // Ссылка на Telegram (работает и в MAX как внешняя ссылка)
-                const telegramUrl = `https://max.ru/${BOT_USERNAME}?text=${encodedMessage}`;
-                
-                // Пытаемся открыть внутри MAX
-                if (window.WebApp && typeof window.WebApp.openLink === 'function') {
-                    window.WebApp.openLink(telegramUrl);
-                    showToast('📨 Открываем чат с ботом...', 'info');
-                } else {
-                    // В браузере
-                    window.open(telegramUrl, '_blank');
-                    showToast('📨 Открыт чат с ботом в браузере', 'info');
-                }
-                
-                // Возвращаемся на главную через 2 секунды
-                setTimeout(() => {
-                    showMainScreen();
-                }, 2000);
+                WebApp.sendData(message);
+                showToast('📨 Отправка в групповой чат...', 'info');
             }
 
-            // ==============================================
             // 1. КОНСУЛЬТАЦИЯ
-            // ==============================================
             document.getElementById('menuConsult').addEventListener('click', function() {
                 const formHtml = `
                     <h1 style="font-size: clamp(22px, 6vw, 26px); margin-bottom: 16px; color: #1D1D1D; display: flex; align-items: center; gap: 12px;">
@@ -963,16 +917,24 @@
                         phone: phone,
                         consultType: consultType,
                         timestamp: new Date().toLocaleString('ru-RU'),
+                        userId: WebApp.initDataUnsafe?.user?.id || 'не авторизован',
                         username: WebApp.initDataUnsafe?.user?.username || ''
                     };
 
                     sendToGroupChat(applicationData);
+                    showToast('✅ Спасибо! Заявка отправлена!', 'success');
+                    
+                    if (WebApp.HapticFeedback) {
+                        WebApp.HapticFeedback.notificationOccurred('success');
+                    }
+
+                    setTimeout(() => {
+                        showMainScreen();
+                    }, 2000);
                 });
             });
 
-            // ==============================================
             // 2. ПРИГЛАШЕНИЕ
-            // ==============================================
             document.getElementById('menuInvite').addEventListener('click', function() {
                 const formHtml = `
                     <h1 style="font-size: clamp(22px, 6vw, 26px); margin-bottom: 16px; color: #1D1D1D; display: flex; align-items: center; gap: 12px;">
@@ -1048,16 +1010,24 @@
                         municipality,
                         organization: org,
                         timestamp: new Date().toLocaleString('ru-RU'),
+                        userId: WebApp.initDataUnsafe?.user?.id || 'не авторизован',
                         username: WebApp.initDataUnsafe?.user?.username || ''
                     };
 
                     sendToGroupChat(inviteData);
+                    showToast('✅ Спасибо! Заявка отправлена!', 'success');
+                    
+                    if (WebApp.HapticFeedback) {
+                        WebApp.HapticFeedback.notificationOccurred('success');
+                    }
+
+                    setTimeout(() => {
+                        showMainScreen();
+                    }, 2000);
                 });
             });
 
-            // ==============================================
             // 3. ЕЦАС
-            // ==============================================
             document.getElementById('menuECAS').addEventListener('click', function() {
                 if (WebApp.openLink) {
                     WebApp.openLink('https://vk.com/cprm18');
@@ -1070,9 +1040,7 @@
                 }
             });
 
-            // ==============================================
-            // TOAST УВЕДОМЛЕНИЯ
-            // ==============================================
+            // TOAST
             function showToast(message, type = 'info') {
                 const toast = document.getElementById('toast');
                 const toastText = document.getElementById('toastText');
@@ -1094,43 +1062,9 @@
             function initUserData() {
                 const user = WebApp.initDataUnsafe?.user;
                 if (user) {
-                    console.log('👤 Пользователь MAX:', user);
+                    console.log('Пользователь MAX:', user);
                 }
             }
-
-            // ==============================================
-            // ДЕМО-ФУНКЦИИ ДЛЯ ТЕСТА В КОНСОЛИ
-            // ==============================================
-            window.testConsultation = function() {
-                sendToGroupChat({
-                    type: 'consultation',
-                    fullName: 'Иванов Иван',
-                    phone: '+7 912 345-67-89',
-                    consultType: 'Первично',
-                    timestamp: new Date().toLocaleString('ru-RU'),
-                    userId: 'тест',
-                    username: 'test_user'
-                });
-            };
-
-            window.testInvite = function() {
-                sendToGroupChat({
-                    type: 'event_invite',
-                    fullName: 'Петров Петр Петрович',
-                    position: 'Директор',
-                    phone: '+7 912 345-67-89',
-                    municipality: 'г. Ижевск',
-                    organization: 'Школа №1',
-                    timestamp: new Date().toLocaleString('ru-RU'),
-                    userId: 'тест',
-                    username: 'test_user'
-                });
-            };
-
-            console.log('🚀 Спасательный круг активирован!');
-            console.log('🤖 Юзернейм бота:', BOT_USERNAME);
-            console.log('📞 testConsultation() - тест консультации');
-            console.log('🎫 testInvite() - тест приглашения');
 
             showMainScreen();
             initUserData();
