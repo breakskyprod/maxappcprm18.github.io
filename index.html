@@ -9,7 +9,6 @@
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* ТВОИ СТИЛИ БЕЗ ИЗМЕНЕНИЙ */
         * {
             margin: 0;
             padding: 0;
@@ -813,7 +812,7 @@
             });
 
             // ==============================================
-            // 🚀 НОВАЯ ФУНКЦИЯ ОТПРАВКИ ЧЕРЕЗ SHARE MAX
+            // 🚀 ИСПРАВЛЕННАЯ ФУНКЦИЯ ОТПРАВКИ ЧЕРЕЗ SHARE MAX
             // ==============================================
             function shareToMaxChat(data) {
                 let shareText = '';
@@ -841,25 +840,58 @@
                     shareText += `\n\n👤 Отправитель: ${userName || 'не указан'}`;
                 }
 
+                // ✅ ПРАВИЛЬНЫЙ ФОРМАТ ДЛЯ shareMaxContent
+                const shareContent = {
+                    text: shareText,
+                    link: 'https://max.ru' // можно указать ссылку на приложение
+                };
+
+                console.log('📤 Отправка через shareMaxContent:', shareContent);
+
                 // Открываем нативный шеринг MAX
-                try {
-                    WebApp.shareMaxContent({
-                        text: shareText
-                    });
-                    console.log('✅ Шеринг открыт');
-                    
-                    // Показываем уведомление
-                    showToast('📤 Выберите чат для отправки', 'info');
-                    
-                    if (WebApp.HapticFeedback) {
-                        WebApp.HapticFeedback.notificationOccurred('success');
+                if (WebApp.shareMaxContent) {
+                    try {
+                        WebApp.shareMaxContent(shareContent);
+                        console.log('✅ Шеринг открыт');
+                        
+                        showToast('📤 Выберите чат для отправки', 'success');
+                        
+                        if (WebApp.HapticFeedback) {
+                            WebApp.HapticFeedback.notificationOccurred('success');
+                        }
+                    } catch (e) {
+                        console.error('❌ Ошибка шеринга:', e);
+                        
+                        // Запасной вариант - пробуем обычный shareContent
+                        tryFallbackShare(shareText);
                     }
-                } catch (e) {
-                    console.error('❌ Ошибка шеринга:', e);
-                    showToast('❌ Ошибка открытия шеринга', 'error');
-                    
-                    // Запасной вариант - копируем в буфер обмена
-                    copyToClipboard(shareText);
+                } else {
+                    // Если shareMaxContent не доступен, пробуем shareContent
+                    tryFallbackShare(shareText);
+                }
+                
+                // Возвращаемся на главную через 2 секунды
+                setTimeout(() => {
+                    showMainScreen();
+                }, 2000);
+            }
+
+            // Запасная функция
+            function tryFallbackShare(text) {
+                if (WebApp.shareContent) {
+                    try {
+                        WebApp.shareContent({
+                            text: text,
+                            link: 'https://max.ru'
+                        });
+                        showToast('📤 Выберите чат для отправки', 'info');
+                    } catch (e) {
+                        console.error('❌ Ошибка fallback:', e);
+                        copyToClipboard(text);
+                        showToast('📋 Текст скопирован в буфер', 'info');
+                    }
+                } else {
+                    copyToClipboard(text);
                     showToast('📋 Текст скопирован в буфер', 'info');
                 }
             }
@@ -1080,7 +1112,6 @@
         })();
     </script>
 </body>
-</html>
 </html>
 </body>
 </html>
