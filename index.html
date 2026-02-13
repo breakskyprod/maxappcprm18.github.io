@@ -9,6 +9,7 @@
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        /* ТВОИ СТИЛИ БЕЗ ИЗМЕНЕНИЙ - ОНИ ИДЕАЛЬНЫ */
         * {
             margin: 0;
             padding: 0;
@@ -72,7 +73,6 @@
             border-radius: 18px;
         }
 
-        /* ===== АДРЕС С КЛИКАБЕЛЬНОЙ КАРТОЙ ===== */
         .org-sub {
             color: #1D1D1D;
             font-size: 15px;
@@ -110,7 +110,6 @@
             margin-left: 2px;
         }
 
-        /* ===== АДАПТИВНОЕ МЕНЮ ===== */
         .menu-icons {
             display: flex;
             justify-content: space-around;
@@ -182,14 +181,12 @@
             word-break: break-word;
         }
 
-        /* ===== АНИМАЦИЯ ПОП-КОРН ДЛЯ ИКОНОК МЕНЮ ===== */
         @keyframes iconPop {
             0% { transform: scale(1); }
             50% { transform: scale(1.2); color: #9a3ae0; }
             100% { transform: scale(1); }
         }
 
-        /* ===== ТЕЛЕФОННЫЙ БЛОК ===== */
         .phone-block {
             background: rgba(120, 30, 180, 0.05);
             backdrop-filter: blur(10px);
@@ -263,7 +260,6 @@
             color: #781EB4;
         }
 
-        /* ===== АНИМАЦИЯ ТРЯСКИ ТЕЛЕФОНА ===== */
         @keyframes phoneShake {
             0% { transform: translateX(0); }
             25% { transform: translateX(-4px); }
@@ -272,7 +268,6 @@
             100% { transform: translateX(0); }
         }
 
-        /* ===== ФОРМЫ ===== */
         .form-section {
             background: rgba(255, 255, 255, 0.6);
             backdrop-filter: blur(10px);
@@ -385,7 +380,6 @@
             margin-right: 8px;
         }
 
-        /* ===== КНОПКИ ОТПРАВКИ (Записаться / Отправить) ===== */
         .button {
             background: linear-gradient(145deg, #8c2ed0, #781EB4);
             color: white;
@@ -439,7 +433,6 @@
             100% { transform: translateX(0); }
         }
 
-        /* ===== КНОПКА НА ГЛАВНУЮ ===== */
         .back-button {
             display: inline-flex;
             align-items: center;
@@ -533,7 +526,6 @@
             opacity: 0.7;
         }
 
-        /* ===== АДАПТАЦИЯ ПОД МАЛЕНЬКИЕ ЭКРАНЫ ===== */
         @media screen and (max-width: 380px) {
             .app-container {
                 padding: 20px 16px;
@@ -624,7 +616,6 @@
             }
         }
 
-        /* ===== ТЁМНАЯ ТЕМА ===== */
         body.dark-theme {
             background: linear-gradient(145deg, #1a0a24, #0f0a1a);
         }
@@ -681,7 +672,7 @@
                 БУ УР «Центр профилактики»
             </h1>
             
-            <!-- АДРЕС С КЛИКАБЕЛЬНОЙ ССЫЛКОЙ НА КАРТУ -->
+            <!-- АДРЕС С КЛИКАБЕЛЬНОЙ КАРТОЙ -->
             <div class="org-sub">
                 <i class="fas fa-map-marker-alt"></i>
                 <a href="https://yandex.ru/maps/-/CPQtMK1x" 
@@ -757,6 +748,113 @@
                 return;
             }
 
+            // ==============================================
+            // 🟣 НАСТРОЙКИ ЯНДЕКС ФОРМ (ВСТАВЬ СВОИ ДАННЫЕ)
+            // ==============================================
+            const YANDEX_FORM_URL = 'https://forms.yandex.ru/u/698f03bf50569071ca65718b'; // ← СЮДА URL ТВОЕЙ ФОРМЫ
+            
+            // ==============================================
+            // ФУНКЦИЯ ОТПРАВКИ В ЯНДЕКС ТАБЛИЦЫ
+            // ==============================================
+            async function sendToYandexSheets(data) {
+                try {
+                    // Формируем данные для отправки в формате JSON [citation:1][citation:3]
+                    const formData = {
+                        'ФИО': data.fullName || '',
+                        'Телефон': data.phone || '',
+                        'Тип': data.type === 'consultation' ? 'Консультация' : 'Приглашение',
+                        'Должность': data.position || '',
+                        'Муниципальное образование': data.municipality || '',
+                        'Организация': data.organization || '',
+                        'Тип консультации': data.consultType || '',
+                        'Время': data.timestamp || new Date().toLocaleString('ru-RU'),
+                        'ID пользователя': WebApp.initDataUnsafe?.user?.id || 'не указан'
+                    };
+
+                    console.log('📤 Отправка в Яндекс:', formData);
+
+                    // Отправляем POST-запрос на URL формы [citation:1]
+                    const response = await fetch(YANDEX_FORM_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(formData)
+                    });
+
+                    if (response.ok) {
+                        console.log('✅ Данные успешно отправлены в Яндекс');
+                        return true;
+                    } else {
+                        console.error('❌ Ошибка отправки:', response.status);
+                        return false;
+                    }
+                } catch (error) {
+                    console.error('❌ Ошибка сети:', error);
+                    return false;
+                }
+            }
+
+            // ==============================================
+            // ОБНОВЛЁННАЯ ФУНКЦИЯ ОТПРАВКИ
+            // ==============================================
+            async function sendToGroupChat(data) {
+                let message = '';
+                
+                if (data.type === 'consultation') {
+                    message = `📝 НОВАЯ ЗАЯВКА НА КОНСУЛЬТАЦИЮ\n\n` +
+                              `👤 ФИО: ${data.fullName}\n` +
+                              `📞 Телефон: ${data.phone}\n` +
+                              `🔁 Тип: ${data.consultType}\n` +
+                              `🆔 ID пользователя: ${WebApp.initDataUnsafe?.user?.id || 'не указан'}\n` +
+                              `🕐 Время: ${data.timestamp}`;
+                } else if (data.type === 'event_invite') {
+                    message = `🎫 ЗАЯВКА НА ПРИГЛАШЕНИЕ\n\n` +
+                              `👤 ФИО: ${data.fullName}\n` +
+                              `📌 Должность: ${data.position}\n` +
+                              `📞 Телефон: ${data.phone}\n` +
+                              `🏙️ Муниципальное образование: ${data.municipality}\n` +
+                              `🏢 Организация: ${data.organization}\n` +
+                              `🆔 ID пользователя: ${WebApp.initDataUnsafe?.user?.id || 'не указан'}\n` +
+                              `🕐 Время: ${data.timestamp}`;
+                }
+
+                // 🥇 Отправляем в Яндекс Таблицы
+                const yandexSuccess = await sendToYandexSheets(data);
+                
+                if (yandexSuccess) {
+                    showToast('✅ Данные сохранены в таблицу!', 'success');
+                }
+
+                // 🥈 Отправляем в чат MAX
+                try {
+                    WebApp.sendData(message);
+                    console.log('✅ Отправлено в чат MAX');
+                    
+                    if (!yandexSuccess) {
+                        showToast('📨 Заявка отправлена в чат', 'info');
+                    }
+                    
+                    if (WebApp.HapticFeedback) {
+                        WebApp.HapticFeedback.notificationOccurred('success');
+                    }
+                } catch (e) {
+                    console.error('❌ Ошибка отправки в чат:', e);
+                    
+                    if (!yandexSuccess) {
+                        showToast('❌ Ошибка отправки', 'error');
+                        if (WebApp.HapticFeedback) {
+                            WebApp.HapticFeedback.notificationOccurred('error');
+                        }
+                    }
+                }
+
+                // Возвращаемся на главную
+                setTimeout(() => {
+                    showMainScreen();
+                }, 2000);
+            }
+
             // АВТОМАТИЧЕСКАЯ ТЕМА MAX
             function applyMaxTheme() {
                 const body = document.body;
@@ -818,31 +916,6 @@
             backToMainBtn.addEventListener('click', function() {
                 showMainScreen();
             });
-
-            function sendToGroupChat(data) {
-                let message = '';
-                
-                if (data.type === 'consultation') {
-                    message = `📝 НОВАЯ ЗАЯВКА НА КОНСУЛЬТАЦИЮ\n\n` +
-                              `👤 ФИО: ${data.fullName}\n` +
-                              `📞 Телефон: ${data.phone}\n` +
-                              `🔁 Тип: ${data.consultType}\n` +
-                              `🆔 ID пользователя: ${data.userId || 'не указан'}\n` +
-                              `🕐 Время: ${data.timestamp}`;
-                } else if (data.type === 'event_invite') {
-                    message = `🎫 ЗАЯВКА НА ПРИГЛАШЕНИЕ\n\n` +
-                              `👤 ФИО: ${data.fullName}\n` +
-                              `📌 Должность: ${data.position}\n` +
-                              `📞 Телефон: ${data.phone}\n` +
-                              `🏙️ Муниципальное образование: ${data.municipality}\n` +
-                              `🏢 Организация: ${data.organization}\n` +
-                              `🆔 ID пользователя: ${data.userId || 'не указан'}\n` +
-                              `🕐 Время: ${data.timestamp}`;
-                }
-
-                WebApp.sendData(message);
-                showToast('📨 Отправка в групповой чат...', 'info');
-            }
 
             // 1. КОНСУЛЬТАЦИЯ
             document.getElementById('menuConsult').addEventListener('click', function() {
@@ -916,21 +989,10 @@
                         fullName: name,
                         phone: phone,
                         consultType: consultType,
-                        timestamp: new Date().toLocaleString('ru-RU'),
-                        userId: WebApp.initDataUnsafe?.user?.id || 'не авторизован',
-                        username: WebApp.initDataUnsafe?.user?.username || ''
+                        timestamp: new Date().toLocaleString('ru-RU')
                     };
 
                     sendToGroupChat(applicationData);
-                    showToast('✅ Спасибо! Заявка отправлена!', 'success');
-                    
-                    if (WebApp.HapticFeedback) {
-                        WebApp.HapticFeedback.notificationOccurred('success');
-                    }
-
-                    setTimeout(() => {
-                        showMainScreen();
-                    }, 2000);
                 });
             });
 
@@ -1009,21 +1071,10 @@
                         phone,
                         municipality,
                         organization: org,
-                        timestamp: new Date().toLocaleString('ru-RU'),
-                        userId: WebApp.initDataUnsafe?.user?.id || 'не авторизован',
-                        username: WebApp.initDataUnsafe?.user?.username || ''
+                        timestamp: new Date().toLocaleString('ru-RU')
                     };
 
                     sendToGroupChat(inviteData);
-                    showToast('✅ Спасибо! Заявка отправлена!', 'success');
-                    
-                    if (WebApp.HapticFeedback) {
-                        WebApp.HapticFeedback.notificationOccurred('success');
-                    }
-
-                    setTimeout(() => {
-                        showMainScreen();
-                    }, 2000);
                 });
             });
 
@@ -1071,5 +1122,7 @@
 
         })();
     </script>
+</body>
+</html>
 </body>
 </html>
