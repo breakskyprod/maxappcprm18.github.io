@@ -526,6 +526,55 @@
             opacity: 0.7;
         }
 
+        /* ===== ТЕСТОВАЯ КНОПКА ===== */
+        .test-button {
+            margin-top: 20px;
+            padding: 14px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 8px 16px rgba(76, 175, 80, 0.2);
+        }
+
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(76, 175, 80, 0.3);
+        }
+
+        .test-button:active {
+            transform: scale(0.97);
+        }
+
+        .test-button i {
+            font-size: 18px;
+        }
+
+        .debug-panel {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0,0,0,0.05);
+            border-radius: 20px;
+            font-size: 13px;
+            font-family: monospace;
+            color: #333;
+            word-break: break-all;
+            display: none;
+        }
+
+        .debug-panel.show {
+            display: block;
+        }
+
         @media screen and (max-width: 380px) {
             .app-container {
                 padding: 20px 16px;
@@ -661,6 +710,16 @@
             background: rgba(30, 20, 40, 0.8);
             color: white;
         }
+
+        body.dark-theme .test-button {
+            background: #45a049;
+            box-shadow: 0 8px 16px rgba(69, 160, 73, 0.3);
+        }
+
+        body.dark-theme .debug-panel {
+            background: rgba(255,255,255,0.1);
+            color: #eee;
+        }
     </style>
 </head>
 <body>
@@ -721,6 +780,18 @@
                 </a>
             </div>
             <div style="height: 8px;"></div>
+
+            <!-- 🔧 ТЕСТОВАЯ КНОПКА -->
+            <button class="test-button" id="testSendBtn">
+                <i class="fas fa-vial"></i>
+                ТЕСТ ОТПРАВКИ В ЧАТ-БОТА
+            </button>
+
+            <!-- 📊 ПАНЕЛЬ ОТЛАДКИ -->
+            <div class="debug-panel" id="debugPanel">
+                <div style="font-weight:700; margin-bottom:10px;">📋 Диагностика:</div>
+                <div id="debugContent"></div>
+            </div>
         </div>
 
         <!-- ЭКРАН ФОРМЫ -->
@@ -743,45 +814,68 @@
             'use strict';
 
             const WebApp = window.WebApp;
+            
+            // Функция для панели отладки
+            function addDebugInfo(text, isError = false) {
+                const panel = document.getElementById('debugPanel');
+                const content = document.getElementById('debugContent');
+                const timestamp = new Date().toLocaleTimeString();
+                const color = isError ? '#ff6b6b' : '#4CAF50';
+                content.innerHTML += `<div style="margin:5px 0; color:${color};">[${timestamp}] ${text}</div>`;
+                panel.classList.add('show');
+            }
+
+            function clearDebug() {
+                document.getElementById('debugContent').innerHTML = '';
+            }
+
+            // Проверка окружения
             if (!WebApp) {
-                alert('Ошибка: библиотека MAX Bridge не загружена');
-                return;
-            }
-
-            // АВТОМАТИЧЕСКАЯ ТЕМА MAX
-            function applyMaxTheme() {
-                const body = document.body;
-                const theme = WebApp.colorScheme || WebApp.theme || 'light';
-                console.log('🎨 Тема MAX:', theme);
+                alert('⚠️ Приложение запущено не в MAX. Тестирование будет в демо-режиме.');
+                addDebugInfo('❌ WebApp не найден - запущено не в MAX', true);
+            } else {
+                addDebugInfo('✅ WebApp загружен, версия: ' + (WebApp.version || 'неизвестно'));
                 
-                if (theme === 'dark' || theme === 'night' || theme === 'black') {
-                    body.classList.add('dark-theme');
-                } else {
-                    body.classList.remove('dark-theme');
+                // АВТОМАТИЧЕСКАЯ ТЕМА MAX
+                function applyMaxTheme() {
+                    const body = document.body;
+                    const theme = WebApp.colorScheme || WebApp.theme || 'light';
+                    console.log('🎨 Тема MAX:', theme);
+                    
+                    if (theme === 'dark' || theme === 'night' || theme === 'black') {
+                        body.classList.add('dark-theme');
+                        addDebugInfo('🌙 Тёмная тема активирована');
+                    } else {
+                        body.classList.remove('dark-theme');
+                        addDebugInfo('☀️ Светлая тема активирована');
+                    }
                 }
-            }
 
-            applyMaxTheme();
-
-            WebApp.onEvent('themeChanged', function(themeData) {
-                console.log('🔄 Тема изменена:', themeData);
                 applyMaxTheme();
-            });
 
-            if (WebApp.onEvent) {
-                WebApp.onEvent('colorSchemeChanged', applyMaxTheme);
-            }
+                WebApp.onEvent('themeChanged', function(themeData) {
+                    console.log('🔄 Тема изменена:', themeData);
+                    addDebugInfo('🔄 Тема изменена');
+                    applyMaxTheme();
+                });
 
-            WebApp.ready();
-            WebApp.enableClosingConfirmation();
-            WebApp.BackButton.show();
-            WebApp.BackButton.onClick(() => {
-                if (formScreen.style.display === 'block') {
-                    showMainScreen();
-                } else {
-                    WebApp.close();
+                if (WebApp.onEvent) {
+                    WebApp.onEvent('colorSchemeChanged', applyMaxTheme);
                 }
-            });
+
+                WebApp.ready();
+                addDebugInfo('✅ WebApp.ready() вызван');
+
+                WebApp.enableClosingConfirmation();
+                WebApp.BackButton.show();
+                WebApp.BackButton.onClick(() => {
+                    if (formScreen.style.display === 'block') {
+                        showMainScreen();
+                    } else {
+                        WebApp.close();
+                    }
+                });
+            }
 
             const mainScreen = document.getElementById('mainScreen');
             const formScreen = document.getElementById('formScreen');
@@ -793,7 +887,9 @@
             function showMainScreen() {
                 mainScreen.style.display = 'block';
                 formScreen.style.display = 'none';
-                WebApp.BackButton.show();
+                if (WebApp) {
+                    WebApp.BackButton.show();
+                }
             }
 
             function showFormScreen(formHtml) {
@@ -801,7 +897,7 @@
                 formScreen.style.display = 'block';
                 formContent.innerHTML = formHtml;
                 window.scrollTo(0, 0);
-                if (WebApp.HapticFeedback) {
+                if (WebApp && WebApp.HapticFeedback) {
                     WebApp.HapticFeedback.impactOccurred('light');
                 }
             }
@@ -811,51 +907,121 @@
             });
 
             // ==============================================
-            // 🚀 НОВАЯ ФУНКЦИЯ - ОТПРАВКА В ЧАТ-БОТ
+            // 🚀 УЛУЧШЕННАЯ ФУНКЦИЯ ОТПРАВКИ С ДИАГНОСТИКОЙ
             // ==============================================
             function sendToBot(data) {
-                // Формируем красивое сообщение для отправки
+                clearDebug();
+                addDebugInfo('📤 Начинаем отправку заявки...');
+
+                // Проверяем наличие WebApp
+                if (!window.WebApp) {
+                    const errorMsg = '❌ WebApp не найден - приложение запущено не в MAX';
+                    console.error(errorMsg);
+                    addDebugInfo(errorMsg, true);
+                    showToast('❌ Откройте приложение в MAX', 'error');
+                    return false;
+                }
+
+                // Формируем сообщение
                 let message = '';
                 
                 if (data.type === 'consultation') {
-                    message = '📝 НОВАЯ ЗАЯВКА НА КОНСУЛЬТАЦИЮ\n\n' +
-                             '👤 ФИО: ' + data.fullName + '\n' +
-                             '📞 Телефон: ' + data.phone + '\n' +
-                             '🔁 Тип: ' + data.consultType + '\n' +
-                             '🕐 Время: ' + data.timestamp;
+                    message = '📝 ЗАЯВКА НА КОНСУЛЬТАЦИЮ\n' +
+                              '👤 ' + data.fullName + '\n' +
+                              '📞 ' + data.phone + '\n' +
+                              '🔁 ' + data.consultType + '\n' +
+                              '🕐 ' + data.timestamp;
                 } else if (data.type === 'event_invite') {
-                    message = '🎫 ПРИГЛАШЕНИЕ НА МЕРОПРИЯТИЕ\n\n' +
-                             '👤 ФИО: ' + data.fullName + '\n' +
-                             '📌 Должность: ' + data.position + '\n' +
-                             '📞 Телефон: ' + data.phone + '\n' +
-                             '🏙️ Муниципальное образование: ' + data.municipality + '\n' +
-                             '🏢 Организация: ' + data.organization + '\n' +
-                             '🕐 Время: ' + data.timestamp;
-                }
-                
-                // Добавляем информацию об отправителе, если доступна
-                if (WebApp.initDataUnsafe && WebApp.initDataUnsafe.user) {
-                    const user = WebApp.initDataUnsafe.user;
-                    const userName = [user.last_name, user.first_name].filter(Boolean).join(' ');
-                    if (userName) {
-                        message += '\n\n👤 Отправитель в MAX: ' + userName;
-                    }
+                    message = '🎫 ПРИГЛАШЕНИЕ\n' +
+                              '👤 ' + data.fullName + '\n' +
+                              '📌 ' + data.position + '\n' +
+                              '📞 ' + data.phone + '\n' +
+                              '🏙️ ' + data.municipality + '\n' +
+                              '🏢 ' + data.organization + '\n' +
+                              '🕐 ' + data.timestamp;
                 }
 
-                // ⚡ Отправляем в чат-бота
+                // Добавляем информацию об отправителе
                 try {
+                    const user = WebApp.initDataUnsafe?.user;
+                    if (user) {
+                        const userName = [user.last_name, user.first_name].filter(Boolean).join(' ') || 'не указан';
+                        message += '\n\n👤 От: ' + userName + ' (ID: ' + (user.id || 'нет') + ')';
+                        addDebugInfo('👤 Пользователь: ' + userName);
+                    }
+                } catch (e) {
+                    addDebugInfo('⚠️ Не удалось получить данные пользователя', true);
+                }
+
+                // Логируем длину сообщения
+                addDebugInfo('📏 Длина сообщения: ' + message.length + ' символов');
+                
+                if (message.length > 4000) {
+                    addDebugInfo('⚠️ Сообщение слишком длинное (>4000)', true);
+                }
+
+                // Пытаемся отправить
+                try {
+                    addDebugInfo('📤 Отправка через WebApp.sendData()...');
                     WebApp.sendData(message);
-                    console.log('✅ Отправлено в чат-бота:', message);
-                    showToast('✅ Заявка отправлена в чат!', 'success');
+                    addDebugInfo('✅ Отправка выполнена успешно!');
+                    showToast('✅ Заявка отправлена!', 'success');
+                    
+                    if (WebApp.HapticFeedback) {
+                        WebApp.HapticFeedback.notificationOccurred('success');
+                    }
+                    
+                    return true;
+                } catch (e) {
+                    const errorMsg = '❌ Ошибка при отправке: ' + e.message;
+                    console.error(errorMsg, e);
+                    addDebugInfo(errorMsg, true);
+                    showToast('❌ Ошибка отправки', 'error');
+                    
+                    if (WebApp.HapticFeedback) {
+                        WebApp.HapticFeedback.notificationOccurred('error');
+                    }
+                    
+                    return false;
+                }
+            }
+
+            // ==============================================
+            // 🔧 ТЕСТОВАЯ ФУНКЦИЯ
+            // ==============================================
+            window.testSend = function() {
+                clearDebug();
+                addDebugInfo('🧪 Запуск тестовой отправки...');
+
+                if (!window.WebApp) {
+                    addDebugInfo('❌ Тест не в MAX - показываем демо', true);
+                    showToast('🧪 Демо: тест прошёл успешно!', 'success');
+                    return;
+                }
+
+                const testMessage = '🧪 Тестовое сообщение от ' + new Date().toLocaleString('ru-RU');
+                
+                try {
+                    addDebugInfo('📤 Отправка тестового сообщения...');
+                    WebApp.sendData(testMessage);
+                    addDebugInfo('✅ Тестовое сообщение отправлено!');
+                    showToast('✅ Тест отправлен!', 'success');
                     
                     if (WebApp.HapticFeedback) {
                         WebApp.HapticFeedback.notificationOccurred('success');
                     }
                 } catch (e) {
-                    console.error('❌ Ошибка отправки:', e);
-                    showToast('❌ Ошибка отправки', 'error');
+                    const errorMsg = '❌ Ошибка теста: ' + e.message;
+                    console.error(errorMsg, e);
+                    addDebugInfo(errorMsg, true);
+                    showToast('❌ Тест не прошёл', 'error');
                 }
-            }
+            };
+
+            // Подключаем тестовую кнопку
+            document.getElementById('testSendBtn').addEventListener('click', function() {
+                window.testSend();
+            });
 
             // 1. КОНСУЛЬТАЦИЯ
             document.getElementById('menuConsult').addEventListener('click', function() {
@@ -913,12 +1079,10 @@
                     
                     if (!name) {
                         showToast('Введите фамилию и имя', 'warning');
-                        if (WebApp.HapticFeedback) WebApp.HapticFeedback.notificationOccurred('warning');
                         return;
                     }
                     if (!phone) {
                         showToast('Введите номер телефона', 'warning');
-                        if (WebApp.HapticFeedback) WebApp.HapticFeedback.notificationOccurred('warning');
                         return;
                     }
 
@@ -932,11 +1096,13 @@
                         timestamp: new Date().toLocaleString('ru-RU')
                     };
 
-                    sendToBot(applicationData);
-
-                    setTimeout(() => {
-                        showMainScreen();
-                    }, 2000);
+                    const sent = sendToBot(applicationData);
+                    
+                    if (sent) {
+                        setTimeout(() => {
+                            showMainScreen();
+                        }, 2000);
+                    }
                 });
             });
 
@@ -1004,7 +1170,6 @@
 
                     if (!fullName || !position || !phone || !municipality || !org) {
                         showToast('Заполните все поля', 'warning');
-                        if (WebApp.HapticFeedback) WebApp.HapticFeedback.notificationOccurred('warning');
                         return;
                     }
 
@@ -1018,23 +1183,25 @@
                         timestamp: new Date().toLocaleString('ru-RU')
                     };
 
-                    sendToBot(inviteData);
+                    const sent = sendToBot(inviteData);
 
-                    setTimeout(() => {
-                        showMainScreen();
-                    }, 2000);
+                    if (sent) {
+                        setTimeout(() => {
+                            showMainScreen();
+                        }, 2000);
+                    }
                 });
             });
 
             // 3. ЕЦАС
             document.getElementById('menuECAS').addEventListener('click', function() {
-                if (WebApp.openLink) {
+                if (WebApp && WebApp.openLink) {
                     WebApp.openLink('https://vk.com/cprm18');
                 } else {
                     window.open('https://vk.com/cprm18', '_blank');
                 }
                 
-                if (WebApp.HapticFeedback) {
+                if (WebApp && WebApp.HapticFeedback) {
                     WebApp.HapticFeedback.impactOccurred('soft');
                 }
             });
@@ -1059,14 +1226,16 @@
             }
 
             function initUserData() {
-                const user = WebApp.initDataUnsafe?.user;
+                const user = WebApp?.initDataUnsafe?.user;
                 if (user) {
                     console.log('Пользователь MAX:', user);
+                    addDebugInfo('👤 Пользователь: ' + (user.first_name || '') + ' ' + (user.last_name || ''));
                 }
             }
 
             showMainScreen();
             initUserData();
+            clearDebug();
 
         })();
     </script>
