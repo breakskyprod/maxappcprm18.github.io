@@ -149,7 +149,7 @@
         }
 
         .menu-item:active .menu-icon {
-            animation: iconPop 0.3s ease;
+            animation: iconPop 0.8s ease;
         }
 
         .menu-icon {
@@ -254,7 +254,7 @@
         }
 
         .phone-number:active {
-            animation: phoneShake 0.4s ease;
+            animation: phoneShake 0.8s ease;
         }
 
         .phone-number i {
@@ -415,11 +415,11 @@
 
         .button:active {
             transform: scale(0.94);
-            animation: buttonGlow 0.3s ease;
+            animation: buttonGlow 0.8s ease;
         }
 
         .button:active i {
-            animation: iconFly 0.3s ease;
+            animation: iconFly 0.8s ease;
         }
 
         .button i {
@@ -468,7 +468,7 @@
         }
 
         .back-button:active i {
-            animation: arrowLeft 0.3s ease;
+            animation: arrowLeft 1.0s ease;
         }
 
         .back-button i {
@@ -827,7 +827,6 @@
                               `👤 ФИО: ${data.fullName}\n` +
                               `📞 Телефон: ${data.phone}\n` +
                               `🔁 Тип: ${data.consultType}\n` +
-                              `🆔 ID пользователя: ${data.userId || 'не указан'}\n` +
                               `🕐 Время: ${data.timestamp}`;
                 } else if (data.type === 'event_invite') {
                     message = `🎫 ЗАЯВКА НА ПРИГЛАШЕНИЕ\n\n` +
@@ -836,7 +835,6 @@
                               `📞 Телефон: ${data.phone}\n` +
                               `🏙️ Муниципальное образование: ${data.municipality}\n` +
                               `🏢 Организация: ${data.organization}\n` +
-                              `🆔 ID пользователя: ${data.userId || 'не указан'}\n` +
                               `🕐 Время: ${data.timestamp}`;
                 }
 
