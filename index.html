@@ -684,28 +684,34 @@
             </div>
 
             <!-- АДАПТИВНЫЕ ИКОНКИ МЕНЮ -->
-            <div class="menu-icons">
-                <div class="menu-item" id="menuConsult">
-                    <div class="menu-icon">
-                        <i class="fas fa-comments"></i>
-                    </div>
-                    <span class="menu-label">Записаться<br>на консультацию</span>
-                </div>
-                
-                <div class="menu-item" id="menuInvite">
-                    <div class="menu-icon">
-                        <i class="fas fa-calendar-alt"></i>
-                    </div>
-                    <span class="menu-label">Пригласить<br>на мероприятие</span>
-                </div>
-                
-                <div class="menu-item" id="menuECAS">
-                    <div class="menu-icon">
-                        <i class="fas fa-external-link-alt"></i>
-                    </div>
-                    <span class="menu-label">ЕЦАС</span>
-                </div>
-            </div>
+<div class="menu-icons">
+    <div class="menu-item" id="menuConsult">
+        <div class="menu-icon">
+            <i class="fas fa-comments"></i>
+        </div>
+        <span class="menu-label">Записаться<br>на консультацию</span>
+    </div>
+    
+    <div class="menu-item" id="menuInvite">
+        <div class="menu-icon">
+            <i class="fas fa-calendar-alt"></i>
+        </div>
+        <span class="menu-label">Пригласить<br>на мероприятие</span>
+    </div>
+    
+    <!-- ЕЦАС — теперь с SVG из репозитория -->
+    <div class="menu-item" id="menuECAS">
+        <div class="menu-icon" style="padding: 0; background: transparent; border-radius: 0;">
+            <img 
+                src="https://raw.githubusercontent.com/breakskyprod/maxappcprm18.github.io/main/ecas.svg" 
+                alt="ЕЦАС" 
+                style="width: 100%; height: 100%; object-fit: contain; filter: invert(28%) sepia(91%) saturate(2324%) hue-rotate(275deg) brightness(94%) contrast(93%);"
+                onerror="this.style.display='none'; this.parentElement.innerHTML = '<i class=\'fas fa-external-link-alt\' style=\'font-size: clamp(32px, 8vw, 48px); color: #781EB4;\'></i>';"
+            >
+        </div>
+        <span class="menu-label">ЕЦАС</span>
+    </div>
+</div>
 
             <!-- ТЕЛЕФОННЫЙ БЛОК -->
             <div class="phone-block">
