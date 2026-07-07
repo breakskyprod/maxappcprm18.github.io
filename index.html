@@ -8,7 +8,17 @@
     <script src="https://st.max.ru/js/max-web-app.js"></script>
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Подключаем шрифт Bryndan Write -->
     <style>
+        @font-face {
+            font-family: 'Bryndan Write';
+            src: url('https://raw.githubusercontent.com/breakskyprod/maxappcprm18.github.io/main/fonts/BryndanWrite.woff2') format('woff2'),
+                 url('https://raw.githubusercontent.com/breakskyprod/maxappcprm18.github.io/main/fonts/BryndanWrite.woff') format('woff');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -809,14 +819,33 @@
         </div>
     </div>
 
-    <!-- ✅ ПОЛНОЭКРАННЫЙ ОВЕРЛЕЙ ДЛЯ ЕЦАС (прокручиваемый) -->
-    <div id="ecasOverlay" class="ecas-overlay">
-        <div style="display: flex; flex-direction: column; align-items: center; min-height: 100vh; width: 100%; background-color: #9896E5;">
-            <img 
-                src="https://raw.githubusercontent.com/breakskyprod/maxappcprm18.github.io/main/ecas_bg.svg" 
-                alt="ЕЦАС фон" 
-                style="width: 100%; height: auto; display: block; flex-shrink: 0;"
-            >
+    <!-- ✅ ПОЛНОЭКРАННЫЙ ОВЕРЛЕЙ ДЛЯ ЕЦАС -->
+    <div id="ecasOverlay" class="ecas-overlay" style="background-image: url('https://raw.githubusercontent.com/breakskyprod/maxappcprm18.github.io/main/paws.svg'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+        <div style="display: flex; flex-direction: column; align-items: center; min-height: 100vh; width: 100%;">
+            <div style="position: relative; width: 100%;">
+                <img 
+                    src="https://raw.githubusercontent.com/breakskyprod/maxappcprm18.github.io/main/ecas_bg.svg" 
+                    alt="ЕЦАС фон" 
+                    style="width: 100%; height: auto; display: block;"
+                >
+                
+                <!-- Кнопка "устранить надпись" из твоего HTML/CSS -->
+                <div style="position: absolute; left: 50%; top: 78.75%; transform: translate(-50%, -50%);">
+                    <div style="width: 914px; max-width: 914px; min-height: 266px; box-sizing: border-box;">
+                        <div 
+                            id="removeInscriptionBtn"
+                            style="width: 914px; height: 266px; box-sizing: border-box; border-radius: 40px; background-color: #9896e5; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.2s ease;"
+                            onmouseover="this.style.transform='scale(1.02)'"
+                            onmouseout="this.style.transform='scale(1)'"
+                            onmousedown="this.style.transform='scale(0.97)'"
+                            onmouseup="this.style.transform='scale(1)'"
+                        >
+                            <p style="color: #fff; font-size: 97px; font-family: 'Bryndan Write', cursive, sans-serif; font-weight: 400; line-height: normal; margin: 0; padding: 0; text-align: center; letter-spacing: 0; text-transform: none; text-decoration: none;">Устранить надпись</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Кнопка "На главную" -->
             <button class="ecas-back-btn" id="ecasBackBtn">
                 <i class="fas fa-arrow-left"></i>
                 На главную
@@ -978,6 +1007,7 @@
             const ecasBackBtn = document.getElementById('ecasBackBtn');
             const formContent = document.getElementById('formContent');
             const backToMainBtn = document.getElementById('backToMainBtn');
+            const removeInscriptionBtn = document.getElementById('removeInscriptionBtn');
 
             const POLICY_URL = 'https://disk.yandex.ru/d/KrLs5xKSHHgzmA';
 
@@ -1197,6 +1227,16 @@
             document.getElementById('menuECAS').addEventListener('click', function() {
                 openEcas();
             });
+
+            // ==============================================
+            // 4. КНОПКА "устранить надпись"
+            // ==============================================
+            if (removeInscriptionBtn) {
+                removeInscriptionBtn.addEventListener('click', function() {
+                    showToast('🛠️ Функция будет реализована позже', 'info');
+                    console.log('Кнопка "устранить надпись" нажата');
+                });
+            }
 
             // ==============================================
             // TOAST
