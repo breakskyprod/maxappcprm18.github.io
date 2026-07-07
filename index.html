@@ -45,12 +45,42 @@
             transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
         }
 
-        .main-screen, .form-screen {
+        .main-screen, .form-screen, .ecas-screen {
+            display: none;
+        }
+
+        .main-screen.active, .form-screen.active, .ecas-screen.active {
             display: block;
         }
 
-        .form-screen {
+        /* Специальные стили для экрана ЕЦАС */
+        .ecas-screen {
             display: none;
+            flex-direction: column;
+            min-height: 70vh;
+            justify-content: space-between;
+        }
+
+        .ecas-screen.active {
+            display: flex;
+        }
+
+        .ecas-content {
+            flex: 1;
+            background-image: url('https://raw.githubusercontent.com/breakskyprod/maxappcprm18.github.io/main/ecas_bg.svg');
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            border-radius: 24px;
+            width: 100%;
+            min-height: 50vh;
+        }
+
+        .ecas-screen .back-button {
+            margin: 20px auto 0;
+            width: auto;
+            padding: 14px 28px;
+            align-self: center;
         }
 
         h1 {
@@ -666,7 +696,7 @@
 <body>
     <div class="app-container" id="appContainer">
         <!-- ГЛАВНЫЙ ЭКРАН -->
-        <div id="mainScreen" class="main-screen">
+        <div id="mainScreen" class="main-screen active">
             <h1>
                 <i class="fas fa-shield-hal"></i>
                 БУ УР «Центр профилактики»
@@ -684,35 +714,34 @@
             </div>
 
             <!-- АДАПТИВНЫЕ ИКОНКИ МЕНЮ -->
-<div class="menu-icons">
-    <div class="menu-item" id="menuConsult">
-        <div class="menu-icon">
-            <i class="fas fa-comments"></i>
-        </div>
-        <span class="menu-label">Записаться<br>на консультацию</span>
-    </div>
-    
-    <div class="menu-item" id="menuInvite">
-        <div class="menu-icon">
-            <i class="fas fa-calendar-alt"></i>
-        </div>
-        <span class="menu-label">Пригласить<br>на мероприятие</span>
-    </div>
-    
-    <!-- ЕЦАС — теперь с SVG из репозитория -->
-    <!-- ЕЦАС — SVG без фильтров, с тёмным фоном как у других -->
-    <div class="menu-item" id="menuECAS">
-        <div class="menu-icon">
-            <img 
-                src="https://raw.githubusercontent.com/breakskyprod/maxappcprm18.github.io/main/ecas.svg" 
-                alt="ЕЦАС" 
-                style="width: 100%; height: 100%; object-fit: contain; display: block;"
-                onerror="this.style.display='none'; this.parentElement.innerHTML = '<i class=\'fas fa-external-link-alt\' style=\'font-size: clamp(32px, 8vw, 48px); color: #781EB4;\'></i>';"
-            >
-        </div>
-        <span class="menu-label">ЕЦАС</span>
-    </div>
-</div>
+            <div class="menu-icons">
+                <div class="menu-item" id="menuConsult">
+                    <div class="menu-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <span class="menu-label">Записаться<br>на консультацию</span>
+                </div>
+                
+                <div class="menu-item" id="menuInvite">
+                    <div class="menu-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <span class="menu-label">Пригласить<br>на мероприятие</span>
+                </div>
+                
+                <!-- ЕЦАС с SVG-иконкой -->
+                <div class="menu-item" id="menuECAS">
+                    <div class="menu-icon">
+                        <img 
+                            src="https://raw.githubusercontent.com/breakskyprod/maxappcprm18.github.io/main/ecas.svg" 
+                            alt="ЕЦАС" 
+                            style="width: 100%; height: 100%; object-fit: contain; display: block;"
+                            onerror="this.style.display='none'; this.parentElement.innerHTML = '<i class=\'fas fa-external-link-alt\' style=\'font-size: clamp(32px, 8vw, 48px); color: #781EB4;\'></i>';"
+                        >
+                    </div>
+                    <span class="menu-label">ЕЦАС</span>
+                </div>
+            </div>
 
             <!-- ТЕЛЕФОННЫЙ БЛОК -->
             <div class="phone-block">
@@ -738,6 +767,15 @@
             </button>
             <div id="formContent"></div>
         </div>
+
+        <!-- ЭКРАН ЕЦАС (SVG-фон) -->
+        <div id="ecasScreen" class="ecas-screen">
+            <div class="ecas-content"></div>
+            <button class="back-button" id="ecasBackBtn">
+                <i class="fas fa-arrow-left"></i>
+                На главную
+            </button>
+        </div>
     </div>
 
     <div id="toast" class="toast-message">
@@ -758,28 +796,20 @@
                 if (!input) return;
                 
                 input.addEventListener('input', function(e) {
-                    let value = e.target.value.replace(/\D/g, ''); // Убираем всё кроме цифр
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length > 11) value = value.substring(0, 11);
                     
-                    // Ограничиваем до 11 цифр (7 + 10 номер)
-                    if (value.length > 11) {
-                        value = value.substring(0, 11);
-                    }
-                    
-                    // Если первая цифра 7 или 8, заменяем на 7
                     if (value.length > 0) {
                         if (value[0] === '8' || value[0] === '7') {
                             value = '7' + value.substring(1);
                         } else {
-                            // Если начинается не с 7 или 8, добавляем 7 в начало
                             value = '7' + value;
                         }
                     }
                     
-                    // Форматируем: +7 (XXX) XXX-XX-XX
                     let formattedValue = '';
                     if (value.length > 0) {
                         formattedValue = '+7';
-                        
                         if (value.length > 1) {
                             formattedValue += ' (' + value.substring(1, 4);
                         }
@@ -793,11 +823,9 @@
                             formattedValue += '-' + value.substring(9, 11);
                         }
                     }
-                    
                     e.target.value = formattedValue;
                 });
                 
-                // Добавляем +7 при фокусе, если поле пустое
                 input.addEventListener('focus', function(e) {
                     if (!e.target.value) {
                         e.target.value = '+7';
@@ -808,11 +836,10 @@
             // ==============================================
             // 🚀 ОТПРАВКА В GOOGLE ТАБЛИЦЫ
             // ==============================================
-            const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxJMxVvQ-nR2bR4b7cXIoipG0gPBc3M2MJrMv3StXV026UrPlWP7HiFgEKxPD8bbRzKeA/exec'; // ← ВСТАВЬ СВОЙ URL
+            const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxJMxVvQ-nR2bR4b7cXIoipG0gPBc3M2MJrMv3StXV026UrPlWP7HiFgEKxPD8bbRzKeA/exec';
 
             async function sendToGoogleSheets(data) {
                 try {
-                    // Добавляем информацию об отправителе из MAX
                     let sender = 'неизвестен';
                     if (WebApp && WebApp.initDataUnsafe && WebApp.initDataUnsafe.user) {
                         const user = WebApp.initDataUnsafe.user;
@@ -860,11 +887,9 @@
             // ОСНОВНОЙ КОД
             // ==============================================
             
-            // Проверка окружения
             if (!WebApp) {
                 alert('⚠️ Приложение запущено не в MAX.');
             } else {
-                // АВТОМАТИЧЕСКАЯ ТЕМА MAX
                 function applyMaxTheme() {
                     const body = document.body;
                     const theme = WebApp.colorScheme || WebApp.theme || 'light';
@@ -890,7 +915,9 @@
                 WebApp.enableClosingConfirmation();
                 WebApp.BackButton.show();
                 WebApp.BackButton.onClick(() => {
-                    if (formScreen.style.display === 'block') {
+                    if (document.getElementById('ecasScreen').classList.contains('active')) {
+                        goToMainFromEcas();
+                    } else if (formScreen.classList.contains('active')) {
                         showMainScreen();
                     } else {
                         WebApp.close();
@@ -900,22 +927,26 @@
 
             const mainScreen = document.getElementById('mainScreen');
             const formScreen = document.getElementById('formScreen');
+            const ecasScreen = document.getElementById('ecasScreen');
             const formContent = document.getElementById('formContent');
             const backToMainBtn = document.getElementById('backToMainBtn');
+            const ecasBackBtn = document.getElementById('ecasBackBtn');
 
             const POLICY_URL = 'https://disk.yandex.ru/d/KrLs5xKSHHgzmA';
 
             function showMainScreen() {
-                mainScreen.style.display = 'block';
-                formScreen.style.display = 'none';
+                mainScreen.classList.add('active');
+                formScreen.classList.remove('active');
+                ecasScreen.classList.remove('active');
                 if (WebApp) {
                     WebApp.BackButton.show();
                 }
             }
 
             function showFormScreen(formHtml) {
-                mainScreen.style.display = 'none';
-                formScreen.style.display = 'block';
+                mainScreen.classList.remove('active');
+                formScreen.classList.add('active');
+                ecasScreen.classList.remove('active');
                 formContent.innerHTML = formHtml;
                 window.scrollTo(0, 0);
                 if (WebApp && WebApp.HapticFeedback) {
@@ -923,9 +954,21 @@
                 }
             }
 
-            backToMainBtn.addEventListener('click', function() {
+            function showEcasScreen() {
+                mainScreen.classList.remove('active');
+                formScreen.classList.remove('active');
+                ecasScreen.classList.add('active');
+                if (WebApp) {
+                    WebApp.BackButton.show();
+                }
+            }
+
+            function goToMainFromEcas() {
                 showMainScreen();
-            });
+            }
+
+            backToMainBtn.addEventListener('click', showMainScreen);
+            ecasBackBtn.addEventListener('click', goToMainFromEcas);
 
             // 1. КОНСУЛЬТАЦИЯ
             document.getElementById('menuConsult').addEventListener('click', function() {
@@ -977,7 +1020,6 @@
                 `;
                 showFormScreen(formHtml);
 
-                // Применяем маску к полю телефона
                 phoneMask(document.getElementById('consultPhone'));
 
                 document.getElementById('submitConsultBtn').addEventListener('click', function() {
@@ -1065,7 +1107,6 @@
                 `;
                 showFormScreen(formHtml);
 
-                // Применяем маску к полю телефона
                 phoneMask(document.getElementById('invitePhone'));
 
                 document.getElementById('submitInviteBtn').addEventListener('click', function() {
@@ -1102,24 +1143,9 @@
                 });
             });
 
-            // 3. ЕЦАС — открывает SVG-фон (временное решение)
+            // 3. ЕЦАС — открывает экран с SVG-фоном
             document.getElementById('menuECAS').addEventListener('click', function() {
-                // 👇 Ссылка на твой SVG-файл (замени логин/репозиторий)
-                const svgUrl = 'https://raw.githubusercontent.com/breakskyprod/maxappcprm18.github.io/main/ecas_bg.svg';
-                
-                const html = `
-                    <div style="
-                        width: 100%;
-                        height: 70vh;
-                        background-image: url('${svgUrl}');
-                        background-size: contain;
-                        background-position: center;
-                        background-repeat: no-repeat;
-                        border-radius: 24px;
-                        margin: 0 auto;
-                    "></div>
-                `;
-                showFormScreen(html);
+                showEcasScreen();
             });
 
             // TOAST
