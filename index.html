@@ -55,7 +55,7 @@
             display: block;
         }
 
-        /* Фуллскрин для ЕЦАС — поверх всего, без белого контейнера */
+        /* Фуллскрин для ЕЦАС — поверх всего, с прокруткой */
         .ecas-overlay {
             display: none;
             position: fixed;
@@ -67,27 +67,13 @@
             background: transparent;
             margin: 0;
             padding: 0;
+            overflow-y: auto;
         }
 
         .ecas-overlay.active {
             display: block;
         }
 
-        .ecas-bg {
-            width: 100%;
-            height: 100%;
-            background-image: url('https://raw.githubusercontent.com/breakskyprod/maxappcprm18.github.io/main/ecas_bg.svg');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            align-items: center;
-            padding-bottom: 40px;
-        }
-
-        /* Кнопка назад для ЕЦАС */
         .ecas-back-btn {
             background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(12px);
@@ -106,6 +92,7 @@
             align-items: center;
             gap: 12px;
             border: none;
+            margin: 20px 0 30px;
         }
 
         .ecas-back-btn:hover {
@@ -822,9 +809,14 @@
         </div>
     </div>
 
-    <!-- ✅ ПОЛНОЭКРАННЫЙ ОВЕРЛЕЙ ДЛЯ ЕЦАС (вне контейнера) -->
+    <!-- ✅ ПОЛНОЭКРАННЫЙ ОВЕРЛЕЙ ДЛЯ ЕЦАС (прокручиваемый) -->
     <div id="ecasOverlay" class="ecas-overlay">
-        <div class="ecas-bg">
+        <div style="display: flex; flex-direction: column; align-items: center; min-height: 100vh; width: 100%;">
+            <img 
+                src="https://raw.githubusercontent.com/breakskyprod/maxappcprm18.github.io/main/ecas_bg.svg" 
+                alt="ЕЦАС фон" 
+                style="width: 100%; height: auto; display: block;"
+            >
             <button class="ecas-back-btn" id="ecasBackBtn">
                 <i class="fas fa-arrow-left"></i>
                 На главную
