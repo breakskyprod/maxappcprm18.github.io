@@ -1102,17 +1102,24 @@
                 });
             });
 
-            // 3. ЕЦАС
+            // 3. ЕЦАС — открывает SVG-фон (временное решение)
             document.getElementById('menuECAS').addEventListener('click', function() {
-                if (WebApp && WebApp.openLink) {
-                    WebApp.openLink('https://vk.com/cprm18');
-                } else {
-                    window.open('https://vk.com/cprm18', '_blank');
-                }
+                // 👇 Ссылка на твой SVG-файл (замени логин/репозиторий)
+                const svgUrl = 'https://raw.githubusercontent.com/breakskyprod/maxappcprm18.github.io/main/ecas_bg.svg';
                 
-                if (WebApp && WebApp.HapticFeedback) {
-                    WebApp.HapticFeedback.impactOccurred('soft');
-                }
+                const html = `
+                    <div style="
+                        width: 100%;
+                        height: 70vh;
+                        background-image: url('${svgUrl}');
+                        background-size: contain;
+                        background-position: center;
+                        background-repeat: no-repeat;
+                        border-radius: 24px;
+                        margin: 0 auto;
+                    "></div>
+                `;
+                showFormScreen(html);
             });
 
             // TOAST
