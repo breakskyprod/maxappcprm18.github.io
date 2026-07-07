@@ -9,7 +9,6 @@
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* ТВОЙ РОДНОЙ ДИЗАЙН */
         * {
             margin: 0;
             padding: 0;
@@ -29,6 +28,8 @@
             padding: 16px;
             padding-bottom: 40px;
             transition: background 0.3s ease;
+            margin: 0;
+            overflow-x: hidden;
         }
 
         .app-container {
@@ -43,46 +44,85 @@
                         0 4px 12px rgba(0, 0, 0, 0.02);
             padding: 28px 22px;
             transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+            position: relative;
         }
 
-        .main-screen, .form-screen, .ecas-screen {
+        .main-screen, .form-screen {
             display: none;
         }
 
-        .main-screen.active, .form-screen.active, .ecas-screen.active {
+        .main-screen.active, .form-screen.active {
             display: block;
         }
 
-        /* Специальные стили для экрана ЕЦАС */
-        .ecas-screen {
+        /* Фуллскрин для ЕЦАС — поверх всего, без белого контейнера */
+        .ecas-overlay {
             display: none;
-            flex-direction: column;
-            min-height: 70vh;
-            justify-content: space-between;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 9999;
+            background: transparent;
+            margin: 0;
+            padding: 0;
         }
 
-        .ecas-screen.active {
-            display: flex;
+        .ecas-overlay.active {
+            display: block;
         }
 
-        .ecas-content {
-            flex: 1;
+        .ecas-bg {
+            width: 100%;
+            height: 100%;
             background-image: url('https://raw.githubusercontent.com/breakskyprod/maxappcprm18.github.io/main/ecas_bg.svg');
-            background-size: contain;
+            background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            border-radius: 24px;
-            width: 100%;
-            min-height: 50vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+            padding-bottom: 40px;
         }
 
-        .ecas-screen .back-button {
-            margin: 20px auto 0;
-            width: auto;
-            padding: 14px 28px;
-            align-self: center;
+        /* Кнопка назад для ЕЦАС */
+        .ecas-back-btn {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            padding: 14px 32px;
+            border-radius: 60px;
+            color: white;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.25s ease;
+            letter-spacing: 0.3px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            border: none;
         }
 
+        .ecas-back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.04);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .ecas-back-btn:active {
+            transform: scale(0.96);
+        }
+
+        .ecas-back-btn i {
+            font-size: 18px;
+        }
+
+        /* Остальные стили без изменений */
         h1 {
             font-size: 26px;
             font-weight: 800;
@@ -631,6 +671,11 @@
                 padding: 16px 20px;
                 font-size: 16px;
             }
+
+            .ecas-back-btn {
+                font-size: 15px;
+                padding: 12px 24px;
+            }
         }
 
         @media screen and (min-width: 381px) and (max-width: 450px) {
@@ -691,6 +736,15 @@
             background: rgba(30, 20, 40, 0.8);
             color: white;
         }
+
+        body.dark-theme .ecas-back-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        body.dark-theme .ecas-back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
     </style>
 </head>
 <body>
@@ -729,7 +783,6 @@
                     <span class="menu-label">Пригласить<br>на мероприятие</span>
                 </div>
                 
-                <!-- ЕЦАС с SVG-иконкой -->
                 <div class="menu-item" id="menuECAS">
                     <div class="menu-icon">
                         <img 
@@ -767,11 +820,12 @@
             </button>
             <div id="formContent"></div>
         </div>
+    </div>
 
-        <!-- ЭКРАН ЕЦАС (SVG-фон) -->
-        <div id="ecasScreen" class="ecas-screen">
-            <div class="ecas-content"></div>
-            <button class="back-button" id="ecasBackBtn">
+    <!-- ✅ ПОЛНОЭКРАННЫЙ ОВЕРЛЕЙ ДЛЯ ЕЦАС (вне контейнера) -->
+    <div id="ecasOverlay" class="ecas-overlay">
+        <div class="ecas-bg">
+            <button class="ecas-back-btn" id="ecasBackBtn">
                 <i class="fas fa-arrow-left"></i>
                 На главную
             </button>
@@ -915,8 +969,9 @@
                 WebApp.enableClosingConfirmation();
                 WebApp.BackButton.show();
                 WebApp.BackButton.onClick(() => {
-                    if (document.getElementById('ecasScreen').classList.contains('active')) {
-                        goToMainFromEcas();
+                    const overlay = document.getElementById('ecasOverlay');
+                    if (overlay.classList.contains('active')) {
+                        closeEcas();
                     } else if (formScreen.classList.contains('active')) {
                         showMainScreen();
                     } else {
@@ -927,17 +982,16 @@
 
             const mainScreen = document.getElementById('mainScreen');
             const formScreen = document.getElementById('formScreen');
-            const ecasScreen = document.getElementById('ecasScreen');
+            const ecasOverlay = document.getElementById('ecasOverlay');
+            const ecasBackBtn = document.getElementById('ecasBackBtn');
             const formContent = document.getElementById('formContent');
             const backToMainBtn = document.getElementById('backToMainBtn');
-            const ecasBackBtn = document.getElementById('ecasBackBtn');
 
             const POLICY_URL = 'https://disk.yandex.ru/d/KrLs5xKSHHgzmA';
 
             function showMainScreen() {
                 mainScreen.classList.add('active');
                 formScreen.classList.remove('active');
-                ecasScreen.classList.remove('active');
                 if (WebApp) {
                     WebApp.BackButton.show();
                 }
@@ -946,7 +1000,6 @@
             function showFormScreen(formHtml) {
                 mainScreen.classList.remove('active');
                 formScreen.classList.add('active');
-                ecasScreen.classList.remove('active');
                 formContent.innerHTML = formHtml;
                 window.scrollTo(0, 0);
                 if (WebApp && WebApp.HapticFeedback) {
@@ -954,23 +1007,26 @@
                 }
             }
 
-            function showEcasScreen() {
-                mainScreen.classList.remove('active');
-                formScreen.classList.remove('active');
-                ecasScreen.classList.add('active');
-                if (WebApp) {
+            function openEcas() {
+                ecasOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                if (WebApp && WebApp.BackButton) {
                     WebApp.BackButton.show();
                 }
             }
 
-            function goToMainFromEcas() {
+            function closeEcas() {
+                ecasOverlay.classList.remove('active');
+                document.body.style.overflow = '';
                 showMainScreen();
             }
 
             backToMainBtn.addEventListener('click', showMainScreen);
-            ecasBackBtn.addEventListener('click', goToMainFromEcas);
+            ecasBackBtn.addEventListener('click', closeEcas);
 
+            // ==============================================
             // 1. КОНСУЛЬТАЦИЯ
+            // ==============================================
             document.getElementById('menuConsult').addEventListener('click', function() {
                 const formHtml = `
                     <h1 style="font-size: clamp(22px, 6vw, 26px); margin-bottom: 16px; color: #1D1D1D; display: flex; align-items: center; gap: 12px;">
@@ -1143,12 +1199,16 @@
                 });
             });
 
-            // 3. ЕЦАС — открывает экран с SVG-фоном
+            // ==============================================
+            // 3. ЕЦАС — открывает полноэкранный оверлей
+            // ==============================================
             document.getElementById('menuECAS').addEventListener('click', function() {
-                showEcasScreen();
+                openEcas();
             });
 
+            // ==============================================
             // TOAST
+            // ==============================================
             function showToast(message, type = 'info') {
                 const toast = document.getElementById('toast');
                 const toastText = document.getElementById('toastText');
