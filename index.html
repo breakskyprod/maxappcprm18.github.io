@@ -1304,6 +1304,18 @@
             // ==============================================
             const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxJMxVvQ-nR2bR4b7cXIoipG0gPBc3M2MJrMv3StXV026UrPlWP7HiFgEKxPD8bbRzKeA/exec';
 
+            // ==============================================
+            // ФУНКЦИЯ КОНВЕРТАЦИИ ФАЙЛА В BASE64
+            // ==============================================
+            function fileToBase64(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.readAsDataURL(file);
+                    reader.onload = () => resolve(reader.result);
+                    reader.onerror = (error) => reject(error);
+                });
+            }
+
             async function sendToGoogleSheets(data) {
                 try {
                     const dataToSend = {
@@ -1311,7 +1323,10 @@
                         timestamp: new Date().toLocaleString('ru-RU')
                     };
 
-                    console.log('📤 Отправка в Google Sheets:', dataToSend);
+                    console.log('📤 Отправка в Google Sheets:', {
+                        type: dataToSend.type,
+                        dataSize: JSON.stringify(dataToSend).length
+                    });
 
                     const response = await fetch(GOOGLE_SCRIPT_URL, {
                         method: 'POST',
@@ -1583,7 +1598,7 @@
             ecasSiteBackBtn.addEventListener('click', closeEcasSite);
 
             // ==============================================
-            // ОТПРАВКА ФОРМЫ GRAFFITI
+            // ОТПРАВКА ФОРМЫ GRAFFITI С КОНВЕРТАЦИЕЙ ФОТО
             // ==============================================
             document.getElementById('submitGraffitiBtn').addEventListener('click', async function() {
                 const address = document.getElementById('graffitiAddress')?.value.trim();
@@ -1599,19 +1614,23 @@
                 }
 
                 this.disabled = true;
-                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Отправка...';
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Конвертация фото...';
 
                 try {
+                    // Конвертируем файлы в base64
+                    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Загрузка...';
+                    
+                    const base64Files = await Promise.all(
+                        selectedFiles.map(file => fileToBase64(file))
+                    );
+
                     const graffitiData = {
                         type: 'graffiti',
                         address: address,
-                        filesCount: selectedFiles.length,
-                        files: selectedFiles.map(f => f.name).join(', ')
+                        files: base64Files
                     };
 
                     await sendToGoogleSheets(graffitiData);
-
-                    console.log('📸 Файлы для загрузки:', selectedFiles.map(f => f.name));
 
                     setTimeout(() => {
                         closeEcasResult();
