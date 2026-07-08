@@ -372,7 +372,7 @@
             transform: none;
         }
 
-        /* Новая страница для анкеты */
+        /* Стили для страницы анкеты */
         .ecas-site-overlay {
             display: none;
             position: fixed;
@@ -384,6 +384,7 @@
             background-color: #9896E5;
             margin: 0;
             padding: 0;
+            overflow-y: auto;
             justify-content: center;
             align-items: center;
             flex-direction: column;
@@ -394,10 +395,10 @@
         }
 
         .ecas-site-back-btn {
-            position: absolute;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
+            position: relative;
+            bottom: auto;
+            left: auto;
+            transform: none;
             background: rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.3);
@@ -409,6 +410,7 @@
             cursor: pointer;
             transition: 0.25s ease;
             border: none;
+            margin-top: 30px;
         }
 
         .ecas-site-back-btn:hover {
@@ -1217,12 +1219,24 @@
         </button>
     </div>
 
-    <!-- ✅ СТРАНИЦА ДЛЯ АНКЕТЫ (site_button) -->
+    <!-- ✅ СТРАНИЦА ДЛЯ АНКЕТЫ (site_button) с формой -->
     <div id="ecasSiteOverlay" class="ecas-site-overlay">
-        <div style="text-align: center; color: white; padding: 40px;">
-            <h2 style="font-size: 36px; font-weight: 700; margin-bottom: 20px;">📋 Анкета</h2>
-            <p style="font-size: 20px; opacity: 0.8;">Здесь будет форма для заполнения</p>
-            <p style="font-size: 16px; opacity: 0.6; margin-top: 20px;">(страница в разработке)</p>
+        <div class="ecas-form-container">
+            <h2>
+                <i class="fas fa-globe"></i>
+                Перейти на сайт
+            </h2>
+            <p class="subtitle">Укажите сайт, на который хотите перейти</p>
+
+            <div class="ecas-form-group">
+                <label><i class="fas fa-link"></i> Сайт</label>
+                <input type="url" id="siteUrl" placeholder="Например: https://example.com" required>
+            </div>
+
+            <button class="ecas-submit-btn" id="submitSiteBtn">
+                <i class="fas fa-paper-plane"></i>
+                Отправить
+            </button>
         </div>
         <button class="ecas-site-back-btn" id="ecasSiteBackBtn">
             <i class="fas fa-arrow-left"></i>
@@ -1523,7 +1537,6 @@
             }
 
             function openEcasResult() {
-                // Сбрасываем форму при открытии
                 document.getElementById('graffitiAddress').value = '';
                 selectedFiles = [];
                 updateFileUI();
@@ -1541,6 +1554,7 @@
             }
 
             function openEcasSite() {
+                document.getElementById('siteUrl').value = '';
                 ecasSiteOverlay.classList.add('active');
                 document.body.style.overflow = 'hidden';
                 if (WebApp) {
@@ -1609,6 +1623,49 @@
                     showToast('❌ Ошибка отправки', 'error');
                     this.disabled = false;
                     this.innerHTML = '<i class="fas fa-paper-plane"></i> Отправить заявку';
+                }
+            });
+
+            // ==============================================
+            // ОТПРАВКА ФОРМЫ SITE
+            // ==============================================
+            document.getElementById('submitSiteBtn').addEventListener('click', async function() {
+                const siteUrl = document.getElementById('siteUrl')?.value.trim();
+
+                if (!siteUrl) {
+                    showToast('Введите адрес сайта', 'warning');
+                    return;
+                }
+
+                // Простая валидация URL
+                try {
+                    new URL(siteUrl);
+                } catch {
+                    showToast('Введите корректный URL (например, https://example.com)', 'warning');
+                    return;
+                }
+
+                this.disabled = true;
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Отправка...';
+
+                try {
+                    const siteData = {
+                        type: 'site',
+                        site: siteUrl
+                    };
+
+                    await sendToGoogleSheets(siteData);
+
+                    setTimeout(() => {
+                        closeEcasSite();
+                        showToast('✅ Сайт отправлен успешно!', 'success');
+                    }, 1500);
+
+                } catch (error) {
+                    console.error('❌ Ошибка:', error);
+                    showToast('❌ Ошибка отправки', 'error');
+                    this.disabled = false;
+                    this.innerHTML = '<i class="fas fa-paper-plane"></i> Отправить';
                 }
             });
 
