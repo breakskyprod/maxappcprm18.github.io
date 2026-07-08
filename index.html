@@ -1302,50 +1302,10 @@
             // ==============================================
             // 🚀 ОТПРАВКА В GOOGLE ТАБЛИЦЫ
             // ==============================================
-            const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby5EBCBSDJueG4xWMxjggLjnGMRE3iHI9dg-JygxVoiCruhRcw7hCAC0FBbMXngaFY5Vw/exec';
+            const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxJMxVvQ-nR2bR4b7cXIoipG0gPBc3M2MJrMv3StXV026UrPlWP7HiFgEKxPD8bbRzKeA/exec';
 
             // ==============================================
-            // ФУНКЦИЯ СЖАТИЯ ИЗОБРАЖЕНИЯ
-            // ==============================================
-            function compressImage(file, maxWidth = 600, maxHeight = 600, quality = 0.6) {
-                return new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.readAsDataURL(file);
-                    reader.onload = function(event) {
-                        const img = new Image();
-                        img.src = event.target.result;
-                        img.onload = function() {
-                            const canvas = document.createElement('canvas');
-                            let width = img.width;
-                            let height = img.height;
-                            
-                            // Уменьшаем размер, если превышает максимум
-                            if (width > maxWidth) {
-                                height = (height * maxWidth) / width;
-                                width = maxWidth;
-                            }
-                            if (height > maxHeight) {
-                                width = (width * maxHeight) / height;
-                                height = maxHeight;
-                            }
-                            
-                            canvas.width = width;
-                            canvas.height = height;
-                            const ctx = canvas.getContext('2d');
-                            ctx.drawImage(img, 0, 0, width, height);
-                            
-                            // Конвертируем в JPEG с качеством
-                            const dataUrl = canvas.toDataURL('image/jpeg', quality);
-                            resolve(dataUrl);
-                        };
-                        img.onerror = reject;
-                    };
-                    reader.onerror = reject;
-                });
-            }
-
-            // ==============================================
-            // ФУНКЦИЯ КОНВЕРТАЦИИ ФАЙЛА В BASE64 (старая, оставляем для совместимости)
+            // ФУНКЦИЯ КОНВЕРТАЦИИ ФАЙЛА В BASE64
             // ==============================================
             function fileToBase64(file) {
                 return new Promise((resolve, reject) => {
@@ -1638,7 +1598,7 @@
             ecasSiteBackBtn.addEventListener('click', closeEcasSite);
 
             // ==============================================
-            // ОТПРАВКА ФОРМЫ GRAFFITI С СЖАТИЕМ ФОТО
+            // ОТПРАВКА ФОРМЫ GRAFFITI С КОНВЕРТАЦИЕЙ ФОТО
             // ==============================================
             document.getElementById('submitGraffitiBtn').addEventListener('click', async function() {
                 const address = document.getElementById('graffitiAddress')?.value.trim();
@@ -1654,27 +1614,20 @@
                 }
 
                 this.disabled = true;
-                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Подготовка фото...';
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Конвертация фото...';
 
                 try {
-                    // Сжимаем фото
-                    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Сжатие фото...';
+                    // Конвертируем файлы в base64
+                    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Загрузка...';
                     
-                    const compressedFiles = await Promise.all(
-                        selectedFiles.map(file => compressImage(file, 600, 600, 0.6))
+                    const base64Files = await Promise.all(
+                        selectedFiles.map(file => fileToBase64(file))
                     );
-
-                    console.log('✅ Фото сжаты. Количество:', compressedFiles.length);
-                    console.log('📊 Примерный размер данных:', 
-                        (compressedFiles.reduce((acc, f) => acc + f.length, 0) / 1024 / 1024).toFixed(2), 'MB'
-                    );
-
-                    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Отправка...';
 
                     const graffitiData = {
                         type: 'graffiti',
                         address: address,
-                        files: compressedFiles
+                        files: base64Files
                     };
 
                     await sendToGoogleSheets(graffitiData);
@@ -1686,13 +1639,7 @@
 
                 } catch (error) {
                     console.error('❌ Ошибка:', error);
-                    
-                    if (error.message && error.message.includes('payload')) {
-                        showToast('❌ Файлы слишком большие. Попробуйте выбрать меньше фото или фото меньшего размера.', 'error');
-                    } else {
-                        showToast('❌ Ошибка отправки: ' + (error.message || 'неизвестная ошибка'), 'error');
-                    }
-                    
+                    showToast('❌ Ошибка отправки', 'error');
                     this.disabled = false;
                     this.innerHTML = '<i class="fas fa-paper-plane"></i> Отправить заявку';
                 }
