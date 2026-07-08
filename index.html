@@ -9,7 +9,7 @@
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* ВСЕ ТВОИ СТИЛИ (я их не менял, они такие же как в твоём коде) */
+        /* ВСЕ ТВОИ СТИЛИ (я их не менял) */
         * {
             margin: 0;
             padding: 0;
@@ -1304,7 +1304,7 @@
             // 🚀 ОТПРАВКА В GOOGLE ТАБЛИЦЫ
             // ==============================================
             // 👇 ТВОЙ НОВЫЙ URL СКРИПТА
-            const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz-v_w3w3U-onw3rAlO2aCYbh5JokxluiDPZ0afd6MJG6aeJI2TPlJh6CfD0TSxbG0YWQ/exec';
+            const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyZ34rs1tYnIgFdv_xP3Q9aEOZcyZmRykYVJRFUKhJtSouB1ep0Hwt2koXGxRmWB4pUrw/exec';
 
             // ==============================================
             // СЖАТИЕ ИЗОБРАЖЕНИЯ
@@ -1357,14 +1357,29 @@
                         dataSize: JSON.stringify(dataToSend).length
                     });
 
+                    // 👇 Убираем mode: 'no-cors', чтобы видеть ответ
                     const response = await fetch(GOOGLE_SCRIPT_URL, {
                         method: 'POST',
-                        mode: 'no-cors',
                         headers: {
                             'Content-Type': 'application/json',
                         },
                         body: JSON.stringify(dataToSend)
                     });
+
+                    // Пытаемся прочитать ответ
+                    let result;
+                    try {
+                        result = await response.json();
+                    } catch (e) {
+                        result = { status: 'unknown' };
+                    }
+
+                    console.log('📬 Ответ от скрипта:', result);
+
+                    if (result.status === 'error') {
+                        showToast('❌ Ошибка: ' + (result.message || 'неизвестная'), 'error');
+                        return false;
+                    }
 
                     showToast('Спасибо за заявку! Администратор свяжется с Вами в ближайшее время!', 'success');
                     
@@ -1375,8 +1390,8 @@
                     return true;
 
                 } catch (error) {
-                    console.error('❌ Ошибка:', error);
-                    showToast('❌ Ошибка отправки');
+                    console.error('❌ Ошибка отправки:', error);
+                    showToast('❌ Ошибка отправки: ' + error.message, 'error');
                     
                     if (WebApp && WebApp.HapticFeedback) {
                         WebApp.HapticFeedback.notificationOccurred('error');
@@ -1664,12 +1679,17 @@
                         files: compressedFiles
                     };
 
-                    await sendToGoogleSheets(graffitiData);
+                    const success = await sendToGoogleSheets(graffitiData);
 
-                    setTimeout(() => {
-                        closeEcasResult();
-                        showToast('✅ Заявка отправлена успешно!', 'success');
-                    }, 1500);
+                    if (success) {
+                        setTimeout(() => {
+                            closeEcasResult();
+                            showToast(`✅ Заявка отправлена!`, 'success');
+                        }, 1500);
+                    } else {
+                        this.disabled = false;
+                        this.innerHTML = '<i class="fas fa-paper-plane"></i> Отправить заявку';
+                    }
 
                 } catch (error) {
                     console.error('❌ Ошибка:', error);
@@ -1707,12 +1727,17 @@
                         site: siteUrl
                     };
 
-                    await sendToGoogleSheets(siteData);
+                    const success = await sendToGoogleSheets(siteData);
 
-                    setTimeout(() => {
-                        closeEcasSite();
-                        showToast('✅ Сайт отправлен успешно!', 'success');
-                    }, 1500);
+                    if (success) {
+                        setTimeout(() => {
+                            closeEcasSite();
+                            showToast('✅ Сайт отправлен успешно!', 'success');
+                        }, 1500);
+                    } else {
+                        this.disabled = false;
+                        this.innerHTML = '<i class="fas fa-paper-plane"></i> Отправить';
+                    }
 
                 } catch (error) {
                     console.error('❌ Ошибка:', error);
