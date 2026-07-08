@@ -119,6 +119,49 @@
             font-size: 18px;
         }
 
+        /* Стили для фиолетового экрана (пустая вкладка) */
+        .ecas-result-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 10000;
+            background-color: #9896E5;
+            margin: 0;
+            padding: 0;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .ecas-result-overlay.active {
+            display: flex;
+        }
+
+        .ecas-result-back-btn {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 14px 32px;
+            border-radius: 60px;
+            color: white;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.25s ease;
+            border: none;
+        }
+
+        .ecas-result-back-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
         /* Остальные стили без изменений */
         h1 {
             font-size: 26px;
@@ -819,38 +862,23 @@
         </div>
     </div>
 
-    <!-- ✅ ПОЛНОЭКРАННЫЙ ОВЕРЛЕЙ ДЛЯ ЕЦАС -->
-    <div id="ecasOverlay" class="ecas-overlay" style="background-image: url('https://raw.githubusercontent.com/breakskyprod/maxappcprm18.github.io/main/paws.svg'); background-size: cover; background-position: center; background-repeat: no-repeat;">
-        <div style="display: flex; flex-direction: column; align-items: center; min-height: 100vh; width: 100%;">
-            <div style="position: relative; width: 100%;">
-                <img 
-                    src="https://raw.githubusercontent.com/breakskyprod/maxappcprm18.github.io/main/ecas_bg.svg" 
-                    alt="ЕЦАС фон" 
-                    style="width: 100%; height: auto; display: block;"
-                >
-                
-                <!-- Кнопка "устранить надпись" из твоего HTML/CSS -->
-                <div style="position: absolute; left: 160%; top: 58.5%; transform: translate(-50%, -50%);">
-                    <div style="width: 914px; max-width: 914px; min-height: 266px; box-sizing: border-box;">
-                        <div 
-                            id="removeInscriptionBtn"
-                            style="width: 172px; height: 50px; box-sizing: border-box; border-radius: 20px; background-color: #9896e5; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.2s ease;"
-                            onmouseover="this.style.transform='scale(1.02)'"
-                            onmouseout="this.style.transform='scale(1)'"
-                            onmousedown="this.style.transform='scale(0.97)'"
-                            onmouseup="this.style.transform='scale(1)'"
-                        >
-                            <p style="color: #fff; font-size: 20px; font-family: 'Bryndan Write', cursive, sans-serif; font-weight: 400; line-height: normal; margin: 0; padding: 0; text-align: center; letter-spacing: 0; text-transform: none; text-decoration: none;">Устранить надпись</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Кнопка "На главную" -->
+    <!-- ✅ ПОЛНОЭКРАННЫЙ ОВЕРЛЕЙ ДЛЯ ЕЦАС (с кнопкой внутри SVG) -->
+    <div id="ecasOverlay" class="ecas-overlay" style="background-image: url('https://raw.githubusercontent.com/breakskyprod/maxappcprm18.github.io/main/ecas_bg_with_button.svg'); background-size: contain; background-position: center; background-repeat: no-repeat; background-attachment: fixed;">
+        <!-- Кнопка "На главную" внизу -->
+        <div style="display: flex; flex-direction: column; justify-content: flex-end; align-items: center; min-height: 100vh; width: 100%; padding-bottom: 20px;">
             <button class="ecas-back-btn" id="ecasBackBtn">
                 <i class="fas fa-arrow-left"></i>
                 На главную
             </button>
         </div>
+    </div>
+
+    <!-- ✅ ФИОЛЕТОВЫЙ ЭКРАН (ПУСТАЯ ВКЛАДКА) -->
+    <div id="ecasResultOverlay" class="ecas-result-overlay">
+        <button class="ecas-result-back-btn" id="ecasResultBackBtn">
+            <i class="fas fa-arrow-left"></i>
+            На главную
+        </button>
     </div>
 
     <div id="toast" class="toast-message">
@@ -991,7 +1019,10 @@
                 WebApp.BackButton.show();
                 WebApp.BackButton.onClick(() => {
                     const overlay = document.getElementById('ecasOverlay');
-                    if (overlay.classList.contains('active')) {
+                    const result = document.getElementById('ecasResultOverlay');
+                    if (result.classList.contains('active')) {
+                        closeEcasResult();
+                    } else if (overlay.classList.contains('active')) {
                         closeEcas();
                     } else if (formScreen.classList.contains('active')) {
                         showMainScreen();
@@ -1004,16 +1035,19 @@
             const mainScreen = document.getElementById('mainScreen');
             const formScreen = document.getElementById('formScreen');
             const ecasOverlay = document.getElementById('ecasOverlay');
+            const ecasResultOverlay = document.getElementById('ecasResultOverlay');
             const ecasBackBtn = document.getElementById('ecasBackBtn');
+            const ecasResultBackBtn = document.getElementById('ecasResultBackBtn');
             const formContent = document.getElementById('formContent');
             const backToMainBtn = document.getElementById('backToMainBtn');
-            const removeInscriptionBtn = document.getElementById('removeInscriptionBtn');
 
             const POLICY_URL = 'https://disk.yandex.ru/d/KrLs5xKSHHgzmA';
 
             function showMainScreen() {
                 mainScreen.classList.add('active');
                 formScreen.classList.remove('active');
+                ecasOverlay.classList.remove('active');
+                ecasResultOverlay.classList.remove('active');
                 if (WebApp) {
                     WebApp.BackButton.show();
                 }
@@ -1022,6 +1056,8 @@
             function showFormScreen(formHtml) {
                 mainScreen.classList.remove('active');
                 formScreen.classList.add('active');
+                ecasOverlay.classList.remove('active');
+                ecasResultOverlay.classList.remove('active');
                 formContent.innerHTML = formHtml;
                 window.scrollTo(0, 0);
                 if (WebApp && WebApp.HapticFeedback) {
@@ -1032,7 +1068,7 @@
             function openEcas() {
                 ecasOverlay.classList.add('active');
                 document.body.style.overflow = 'hidden';
-                if (WebApp && WebApp.BackButton) {
+                if (WebApp) {
                     WebApp.BackButton.show();
                 }
             }
@@ -1043,8 +1079,23 @@
                 showMainScreen();
             }
 
+            function openEcasResult() {
+                ecasResultOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                if (WebApp) {
+                    WebApp.BackButton.show();
+                }
+            }
+
+            function closeEcasResult() {
+                ecasResultOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+                showMainScreen();
+            }
+
             backToMainBtn.addEventListener('click', showMainScreen);
             ecasBackBtn.addEventListener('click', closeEcas);
+            ecasResultBackBtn.addEventListener('click', closeEcasResult);
 
             // ==============================================
             // 1. КОНСУЛЬТАЦИЯ
@@ -1222,21 +1273,18 @@
             });
 
             // ==============================================
-            // 3. ЕЦАС — открывает полноэкранный оверлей
+            // 3. ЕЦАС — открывает полноэкранный оверлей с новым SVG
             // ==============================================
             document.getElementById('menuECAS').addEventListener('click', function() {
                 openEcas();
             });
 
             // ==============================================
-            // 4. КНОПКА "устранить надпись"
+            // 4. Глобальная функция для вызова из SVG (foreignObject)
             // ==============================================
-            if (removeInscriptionBtn) {
-                removeInscriptionBtn.addEventListener('click', function() {
-                    showToast('🛠️ Функция будет реализована позже', 'info');
-                    console.log('Кнопка "устранить надпись" нажата');
-                });
-            }
+            window.openEcasResult = function() {
+                openEcasResult();
+            };
 
             // ==============================================
             // TOAST
